@@ -1,0 +1,14 @@
+Raul Morales A01365009
+Erik Martin A01365096
+
+From the command line, in the directory path where the
+lex file and the bison files are, there is a make file
+which simplifies the compiling process, so you just
+have to type
+
+                      # make
+
+It will produce an output named "tiny". So the next step
+is to run the program (with "test.c") as:
+
+                    # ./tiny < test.c
