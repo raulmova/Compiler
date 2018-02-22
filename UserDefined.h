@@ -88,7 +88,7 @@ union val {            /* Note that both values are 32-bits in length */
  */
 typedef struct tableEntry_{
    char           * name_p;            /**< The name is just the string */
-   enum myTypes     type;                          /**< Identifier type */
+   char *    type;                          /**< Identifier type */
    unsigned int     lineNumber;  /**< Line number of the last reference */
    union val        value;       /**< Value of the symbol table element */
 }tableEntry;
@@ -183,7 +183,7 @@ int PrintTable (GHashTable * theTable_p);
  * @endcode
  *
  */
-entry_p NewItem (char * varName_p, enum myTypes type, unsigned int lineNumber);
+entry_p NewItem (char * varName_p, char * type, unsigned int lineNumber);
 
 /**
  *
@@ -226,3 +226,4 @@ int FreeItem (entry_p theEntry_p);
  *
  */
 int DestroyTable (GHashTable * theTable_p);
+int InsertItem(GHashTable * theTable_p, entry_p theEntry_p);
