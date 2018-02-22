@@ -76,7 +76,7 @@ single_dec: type ID SEMI {
   entry_p      node_p;
   node_p = malloc(sizeof(entry_p));
   node_p = NewItem($2, $1, lineCount);
-  PrintItem(node_p);
+  //PrintItem(node_p);
   g_hash_table_insert(theTable_p, node_p->name_p, node_p);
 }
     ;

@@ -14,7 +14,7 @@ entry_p NewItem (char * varName_p, char * type, unsigned int lineNumber){
 
 int PrintTable (GHashTable * theTable_p){
   g_hash_table_foreach(theTable_p, (GHFunc)SupportPrint, NULL);
-
+  return(EXIT_SUCCESS);
 }
 
 void SupportPrint (gpointer key_p, gpointer value_p, gpointer user_p){
