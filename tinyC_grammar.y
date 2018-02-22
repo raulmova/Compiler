@@ -1,29 +1,33 @@
 /*Raul Morales A01365009*/
 /*Erik Martin A01365096*/
 
+
+
+%{
+/*Extern files included */
+#include "UserDefined.h"
+#include "types.h"
+#include <string.h>
+#include <stdio.h>
+#include <glib.h>
+
+
+/*Extern variable declared on the lex file to handle the program line*/
+extern int lineCount;
+
+//Variables
+
+
+  /* Function definitions */
+void yyerror(GHashTable * theTable_p, const char* const message);
+int yylex();
+%}
 %union {
     char *s;
     float f;
     int i;
 }
-%{
-#include <string.h>
-#include <stdio.h>
-#include <glib.h>
-#include "UserDefined.h"
-
-/*Variables
- GHashTable * theTable_p;
-
- theTable_p = g_hash_table_new_full(g_str_hash, g_str_equal,
-                                    NULL,
-                                    (GDestroyNotify)FreeItem);
-*/
-  /* Function definitions */
-void yyerror(const char* const message);
-int yylex();
-%}
-
+%parse-param{GHashTable * theTable_p}
 
 %define parse.error verbose       /*Used by the yyerror function for a more descriptive error reporting*/
 
@@ -53,7 +57,7 @@ int yylex();
 %token INT_NUM
 %token FLOAT_NUM
 
-%type <s>type
+%type <s> type
 
 /**** How is the TinyC GRAMMAR constructed     *****/
 
@@ -69,15 +73,19 @@ var_dec: var_dec single_dec
     ;
 
 single_dec: type ID SEMI {
-printf("Tipo: %s Id: %s \n", $1, $2);
+  entry_p      node_p;
+  node_p = malloc(sizeof(entry_p));
+  node_p = NewItem($2, $1, lineCount);
+  PrintItem(node_p);
+  g_hash_table_insert(theTable_p, node_p->name_p, node_p);
 }
     ;
 
 type:  INTEGER{
-                $$ = $1;
+                $$ = "integer";
               }
     |   FLOAT{
-                $$ = $1;
+                $$ = "real";
               }
     ;
 
@@ -124,17 +132,19 @@ variable: ID
 
 %%
 
-/*Extern files included */
 #include "lex.yy.c"
-/*Extern variable declared on the lex file to handle the program line*/
-extern int lineCount;
-
 /* Bison does NOT implement yyerror, so we must implement it */
-void yyerror(const char* const message){
+void yyerror(GHashTable * theTable_p, const char* const message){
   printf ("%s on Line: %d\n",message, lineCount);
 }
 
+
+
 /* Main entry needed by Bison */
 int main (){
-  yyparse();
+  GHashTable * theTable_p;
+  theTable_p = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)FreeItem);
+  yyparse(theTable_p);
+  PrintTable(theTable_p);
+  DestroyTable(theTable_p);
 }
