@@ -1,6 +1,11 @@
 /*Raul Morales A01365009*/
 /*Erik Martin A01365096*/
 
+%union {
+    char *s;
+    float f;
+    int i;
+}
 %{
 #include <string.h>
 #include <stdio.h>
@@ -23,10 +28,10 @@ int yylex();
 %define parse.error verbose       /*Used by the yyerror function for a more descriptive error reporting*/
 
 /*****************************All the tokens return by the lex file*******************************/
-%token ID
+%token <s>ID
 %token SEMI
-%token INTEGER
-%token FLOAT
+%token <s>INTEGER
+%token <s>FLOAT
 %token IF
 %token THEN
 %token ELSE
@@ -48,6 +53,8 @@ int yylex();
 %token INT_NUM
 %token FLOAT_NUM
 
+%type <s>type
+
 /**** How is the TinyC GRAMMAR constructed     *****/
 
 %%
@@ -62,12 +69,16 @@ var_dec: var_dec single_dec
     ;
 
 single_dec: type ID SEMI {
-printf("%d - %d", $1, $2);
+printf("Tipo: %s Id: %s \n", $1, $2);
 }
     ;
 
-type:  INTEGER
-    |   FLOAT
+type:  INTEGER{
+                $$ = $1;
+              }
+    |   FLOAT{
+                $$ = $1;
+              }
     ;
 
 stmt_seq: stmt_seq stmt

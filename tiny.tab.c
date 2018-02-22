@@ -62,25 +62,8 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 4 "tinyC_grammar.y" /* yacc.c:339  */
 
-#include <string.h>
-#include <stdio.h>
-#include <glib.h>
-#include "UserDefined.h"
-
-/*Variables
- GHashTable * theTable_p;
-
- theTable_p = g_hash_table_new_full(g_str_hash, g_str_equal,
-                                    NULL,
-                                    (GDestroyNotify)FreeItem);
-*/
-  /* Function definitions */
-void yyerror(const char* const message);
-int yylex();
-
-#line 84 "tiny.tab.c" /* yacc.c:339  */
+#line 67 "tiny.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -141,7 +124,19 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+
+union YYSTYPE
+{
+#line 4 "tinyC_grammar.y" /* yacc.c:355  */
+
+    char *s;
+    float f;
+    int i;
+
+#line 137 "tiny.tab.c" /* yacc.c:355  */
+};
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -154,8 +149,25 @@ int yyparse (void);
 
 
 /* Copy the second part of user declarations.  */
+#line 9 "tinyC_grammar.y" /* yacc.c:358  */
 
-#line 159 "tiny.tab.c" /* yacc.c:358  */
+#include <string.h>
+#include <stdio.h>
+#include <glib.h>
+#include "UserDefined.h"
+
+/*Variables
+ GHashTable * theTable_p;
+
+ theTable_p = g_hash_table_new_full(g_str_hash, g_str_equal,
+                                    NULL,
+                                    (GDestroyNotify)FreeItem);
+*/
+  /* Function definitions */
+void yyerror(const char* const message);
+int yylex();
+
+#line 171 "tiny.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -455,10 +467,10 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    54,    54,    57,    60,    61,    64,    69,    70,    73,
-      74,    77,    78,    79,    80,    81,    82,    83,    86,    89,
-      90,    91,    94,    95,    96,    99,   100,   101,   104,   105,
-     106,   107,   110
+       0,    61,    61,    64,    67,    68,    71,    76,    79,    84,
+      85,    88,    89,    90,    91,    92,    93,    94,    97,   100,
+     101,   102,   105,   106,   107,   110,   111,   112,   115,   116,
+     117,   118,   121
 };
 #endif
 
@@ -1268,21 +1280,37 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 54 "tinyC_grammar.y" /* yacc.c:1661  */
+#line 61 "tinyC_grammar.y" /* yacc.c:1646  */
     { printf ("No errors on the program.\n");}
-#line 1274 "tiny.tab.c" /* yacc.c:1661  */
+#line 1286 "tiny.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 64 "tinyC_grammar.y" /* yacc.c:1661  */
+#line 71 "tinyC_grammar.y" /* yacc.c:1646  */
     {
-printf("%d - %d", (yyvsp[-2]), (yyvsp[-1]));
+printf("Tipo: %s Id: %s \n", (yyvsp[-2].s), (yyvsp[-1].s));
 }
-#line 1282 "tiny.tab.c" /* yacc.c:1661  */
+#line 1294 "tiny.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 7:
+#line 76 "tinyC_grammar.y" /* yacc.c:1646  */
+    {
+                (yyval.s) = (yyvsp[0].s);
+              }
+#line 1302 "tiny.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 8:
+#line 79 "tinyC_grammar.y" /* yacc.c:1646  */
+    {
+                (yyval.s) = (yyvsp[0].s);
+              }
+#line 1310 "tiny.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1286 "tiny.tab.c" /* yacc.c:1661  */
+#line 1314 "tiny.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1510,7 +1538,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 114 "tinyC_grammar.y" /* yacc.c:1906  */
+#line 125 "tinyC_grammar.y" /* yacc.c:1906  */
 
 
 /*Extern files included */

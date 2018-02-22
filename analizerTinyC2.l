@@ -4,9 +4,13 @@
 /*This is the declaration section
 The only one needed is the variable for the program line */
 
+
 %{
   int lineCount = 1;
+
 %}
+
+
 
   /*This is the rule definition (Regular expressions)*/
 comment   [/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]
@@ -26,8 +30,8 @@ int		   [-]*[0-9][0-9]*
                                 }
                               }
                             }
-"int"                     {return INTEGER;}
-"float"                   {return FLOAT;}
+"int"                     {yylval.s = strdup(yytext);return INTEGER;}
+"float"                   {yylval.s = strdup(yytext);return FLOAT;}
 "if"                      {return IF;}
 "then"                    {return THEN;}
 "else"                    {return ELSE;}
@@ -53,9 +57,12 @@ int		   [-]*[0-9][0-9]*
 
 ":="                      {return ASSIGN;}
 
-{id}                      {return ID;}
-{int}                     {return INT_NUM;}
-{float}                   {return FLOAT_NUM;}
+{id}                      {yylval.s = strdup(yytext);
+                              return ID;}
+{int}                     {yylval.i = atoi(yytext);
+                              return INT_NUM;}
+{float}                   {yylval.f = atof(yytext);
+                              return FLOAT_NUM;}
 
 [ \t\r]                   /* Skip Whitespace */
 
