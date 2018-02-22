@@ -23,13 +23,14 @@ YACC    = bison
 TARGET_LEX =  analizerTinyC2.l
 TARGET_GRAM = tinyC_grammar.y
 TARGET_NAME=  tiny
+TARGET_USER= UserDefined.c
 #
 # Rule definitioans for target builds
 #
 all:
-	$(YACC) -v $(TARGET_GRAM) -o $(TARGET_NAME).tab.c 
+	$(YACC) -v $(TARGET_GRAM) -o $(TARGET_NAME).tab.c
 	$(LEX) $(TARGET_LEX)
-	$(CC) -DGRAMMAR $(COPT) -o $(TARGET_NAME) $(TARGET_NAME).tab.c -ll `pkg-config --cflags --libs glib-2.0`
+	$(CC) -DGRAMMAR $(COPT) -o $(TARGET_NAME) $(TARGET_NAME).tab.c -ll `pkg-config --cflags --libs glib-2.0` $(TARGET_USER)
 
 clean:
 	rm -f *~ core lex.yy.c $(TARGET_NAME).tab.* $(TARGET_NAME).output
