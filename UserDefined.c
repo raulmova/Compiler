@@ -22,7 +22,7 @@ void SupportPrint (gpointer key_p, gpointer value_p, gpointer user_p){
 }
 
 int PrintItem (entry_p theEntry_p){
-  printf("Name: %s -- Type: %s\n",theEntry_p->name_p,theEntry_p->type);
+  printf("Name: %s -- Type: %s --Line:%d\n",theEntry_p->name_p,theEntry_p->type, theEntry_p->lineNumber);
   return 1;
 }
 
