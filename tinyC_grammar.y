@@ -73,15 +73,15 @@ var_dec: var_dec single_dec
 
 single_dec: type ID SEMI {
   entry_p      node_p;
-  node_p = malloc(sizeof(entry_p));
-  node_p = NewItem($2, $1, lineCount);
+  node_p = malloc(sizeof(entry_p)); //memory allocation for the node
+  node_p = NewItem($2, $1, lineCount);  //creation of the node with the values provided
   //PrintItem(node_p);
-  g_hash_table_insert(theTable_p, node_p->name_p, node_p);
+  g_hash_table_insert(theTable_p, node_p->name_p, node_p);  //insertion of node into the table
 }
     ;
 
 type:  INTEGER{
-                $$ = "integer";
+                $$ = "integer"; //tells to the hash table the type of the variable
               }
     |   FLOAT{
                 $$ = "real";
@@ -141,9 +141,10 @@ void yyerror(GHashTable * theTable_p, const char* const message){
 
 /* Main entry needed by Bison */
 int main (){
-  GHashTable * theTable_p;
-  theTable_p = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)FreeItem);
+  GHashTable * theTable_p; //declaration of hash table
+
+  theTable_p = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)FreeItem);  //creation of hash table
   yyparse(theTable_p);
-  PrintTable(theTable_p);
-  DestroyTable(theTable_p);
+  PrintTable(theTable_p);  //printing of hash table
+  DestroyTable(theTable_p); //memory de allocation of the hash table 
 }
