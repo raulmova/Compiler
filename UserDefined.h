@@ -227,3 +227,4 @@ int FreeItem (entry_p theEntry_p);
  */
 int DestroyTable (GHashTable * theTable_p);
 int InsertItem(GHashTable * theTable_p, entry_p theEntry_p);
+entry_p GetItem(GHashTable * theTable_p, char *key);

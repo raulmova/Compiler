@@ -11,6 +11,7 @@
   Create a new  entry to the hash table
 */
 
+
 entry_p NewItem (char * varName_p, char * type, unsigned int lineNumber){
                    entry_p ent = malloc(sizeof(entry_p));
                    ent->name_p = varName_p;
@@ -69,6 +70,12 @@ int FreeItem (entry_p theEntry_p){
 int DestroyTable (GHashTable * theTable_p){
   g_hash_table_destroy(theTable_p);
   return(EXIT_SUCCESS);
+}
+
+entry_p GetItem(GHashTable * theTable_p, char *key){
+  entry_p ent = malloc(sizeof(entry_p));
+  ent = (entry_p) g_hash_table_lookup(theTable_p,key);
+  return ent;
 }
 
 /*

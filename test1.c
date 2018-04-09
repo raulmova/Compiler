@@ -8,12 +8,13 @@ int h;
 int h2;
 float h3;
 float j7;
-int i7;
+int i9;
 int h7;
 
 /* There is no "main" program, just blocks */
 {
 
+  u := 0;
  h3 := 10.0;
  i := 0;
 
