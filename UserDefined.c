@@ -74,7 +74,7 @@ int DestroyTable (GHashTable * theTable_p){
 
 entry_p GetItem(GHashTable * theTable_p, char *key){
   entry_p ent = malloc(sizeof(entry_p));
-  ent = (entry_p) g_hash_table_lookup(theTable_p,key);
+  ent = (entry_p)g_hash_table_lookup(theTable_p,key);
   return ent;
 }
 

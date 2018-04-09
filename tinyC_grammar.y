@@ -25,6 +25,7 @@ int yylex();
     char *s;
     float f;
     int i;
+    entry_p entry;
 }
 %parse-param{GHashTable * theTable_p}
 
@@ -56,7 +57,7 @@ int yylex();
 %token INT_NUM
 %token FLOAT_NUM
 
-%type <s> type
+%type <s> type variable exp simple_exp term factor
 
 /**** How is the TinyC GRAMMAR constructed     *****/
 
@@ -106,8 +107,11 @@ stmt:    IF exp THEN stmt
     |    IF exp THEN stmt ELSE stmt
     |    WHILE exp DO stmt
     |    variable ASSIGN exp SEMI{
+          //entry_p ent = GetItem(theTable_p, $1->name);
+          printf("%s\n",$1);
+          printf("%s\n",$3);
 
-    };
+    }
     |    READ LPAREN variable RPAREN SEMI
     |    WRITE LPAREN variable RPAREN SEMI
     |   block
@@ -118,29 +122,58 @@ block:  LBRACE stmt_seq RBRACE
 
 exp:    simple_exp LT simple_exp
     |   simple_exp EQ simple_exp
-    |   simple_exp
+    |   simple_exp{
+        $$ = $1;
+    }
     ;
 
 simple_exp:   simple_exp PLUS term
     |         simple_exp MINUS term
-    |         term
+    |         term{
+        $$ = $1;
+    }
     ;
 
-term:   term TIMES factor
-    |   term DIV factor
-    |   factor
+term:   term TIMES factor{
+        if($1 == "integer" && $3 == "integer"){
+          $$ = "integer";
+        } else if($1 == "integer" && $3 == "real"){
+          $$ = "real";
+        } else if($1 == "real" && $3 == "integer"){
+          $$ = "real";
+        } else if($1 == "real" && $3 == "real"){
+          $$ = "real";
+        } else{
+            $$ = "Error";
+        }
+    }
+    |   term DIV factor{
+
+    }
+    |   factor{
+        $$ = $1;
+    }
     ;
 
-factor:   LPAREN exp RPAREN
-    |     INT_NUM
-    |     FLOAT_NUM
-    |     variable
+factor:   LPAREN exp RPAREN{
+          $$ = $2;
+    }
+    |     INT_NUM{
+          $$ = "integer";
+    }
+    |     FLOAT_NUM{
+          $$ = "real";
+    }
+    |     variable{
+          $$ = $1;
+    }
     ;
 
 variable: ID{
           entry_p entry = GetItem(theTable_p, $1);
           if(entry != NULL){
               printf("Variable YES declared %s\n", entry ->name_p );
+              $$ = entry->type;
             }
             else{
               printf("No Variable '%s' declared before. ", $1);
