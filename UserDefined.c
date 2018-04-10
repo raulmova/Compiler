@@ -44,7 +44,7 @@ void SupportPrint (gpointer key_p, gpointer value_p, gpointer user_p){
  */
 
 int PrintItem (entry_p theEntry_p){
-  printf("Name: %s -- Type: %s --Value %d --Line:%d\n",theEntry_p->name_p,theEntry_p->type, (theEntry_p->value).i_value, theEntry_p->lineNumber);
+  printf("Name: %s -- Type: %s \n",theEntry_p->name_p,theEntry_p->type);
   return 1;
 }
 
