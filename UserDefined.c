@@ -13,12 +13,12 @@
 */
 
 
-entry_p NewItem (char * varName_p, char * type, union val value, unsigned int lineNumber){
+entry_p NewItem (char * varName_p, char * type, unsigned int lineNumber){
                    entry_p ent = (entry_p)malloc(sizeof(entry_p));
                    //ent->value = (union val *) malloc(sizeof(union val));
                    ent->name_p = varName_p;
                    ent->type = type;
-                  ent->value = value;
+                   // ent->value = value;
                    //memcpy(ent->value, value, sizeof(union val));
                    ent->lineNumber = lineNumber;
                    return ent;

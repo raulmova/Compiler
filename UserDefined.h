@@ -170,7 +170,7 @@ int PrintTable (GHashTable * theTable_p);
  * fields of the @c tableEntry structure.
  *
  * @param  varName_p is the input string which is copied by NewItem.
- * @param  type is the variable type (integer or real).
+ * @param  type is the variable type   (integer or real).
  * @param  scope is the scope of the variable.
  * @param  lineNumber line where the variable was declared.
  *
@@ -183,7 +183,7 @@ int PrintTable (GHashTable * theTable_p);
  * @endcode
  *
  */
-entry_p NewItem (char * varName_p, char * type, union val value, unsigned int lineNumber);
+entry_p NewItem (char * varName_p, char * type, unsigned int lineNumber);
 
 /**
  *
