@@ -1,6 +1,7 @@
 #include "UserDefined.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
 /*
@@ -12,10 +13,12 @@
 */
 
 
-entry_p NewItem (char * varName_p, char * type, union val *value, unsigned int lineNumber){
-                   entry_p ent = malloc(sizeof(entry_p));
+entry_p NewItem (char * varName_p, char * type, union val * value, unsigned int lineNumber){
+                   entry_p ent = (entry_p)malloc(sizeof(entry_p));
+                   ent->value = (union val *) malloc(sizeof(union val));
                    ent->name_p = varName_p;
                    ent->type = type;
+                   memcpy(ent->value, value, sizeof(union val));
                    ent->lineNumber = lineNumber;
                    return ent;
                  }
@@ -40,7 +43,7 @@ void SupportPrint (gpointer key_p, gpointer value_p, gpointer user_p){
  */
 
 int PrintItem (entry_p theEntry_p){
-  printf("Name: %s -- Type: %s --Value %d --Line:%d\n",theEntry_p->name_p,theEntry_p->type, theEntry_p->value, theEntry_p->lineNumber);
+  printf("Name: %s -- Type: %s --Value %d --Line:%d\n",theEntry_p->name_p,theEntry_p->type, (theEntry_p->value)->i_value, theEntry_p->lineNumber);
   return 1;
 }
 
