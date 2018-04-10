@@ -90,7 +90,7 @@ typedef struct tableEntry_{
    char     * name_p;            /**< The name is just the string */
    char *    type;               /**< Identifier type */
    unsigned int     lineNumber;  /**< Line number of the last reference */
-   union val*       value;       /**< Value of the symbol table element */
+   union val      value;       /**< Value of the symbol table element */
 }tableEntry;
 
 /**
@@ -183,7 +183,7 @@ int PrintTable (GHashTable * theTable_p);
  * @endcode
  *
  */
-entry_p NewItem (char * varName_p, char * type, union val *value, unsigned int lineNumber);
+entry_p NewItem (char * varName_p, char * type, union val value, unsigned int lineNumber);
 
 /**
  *
