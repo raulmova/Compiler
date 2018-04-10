@@ -77,18 +77,8 @@ single_dec: type ID SEMI {
   node_p = malloc(sizeof(entry_p)); //memory allocation for the node
   node_p = NewItem($2, $1, lineCount);  //creation of the node with the values provided
   //PrintItem(node_p);
-  //g_hash_table_insert(theTable_p, node_p->name_p, node_p);  //insertion of node into the table
-
-  if(g_hash_table_insert(theTable_p, node_p->name_p, node_p)){
-      printf("Variable '%s' inserted successfully \n", $2);
-  }
-  else{
-      printf("Variable '%s' already declared. ", $2);
-      yyerror(theTable_p,"Error");
-      return FALSE;
-  }
-
-  }
+  g_hash_table_insert(theTable_p, node_p->name_p, node_p);  //insertion of node into the table
+}
     ;
 
 type:  INTEGER{
@@ -103,8 +93,8 @@ stmt_seq: stmt_seq stmt
     | %empty
     ;
 
-stmt:    IF exp THEN stmt
-    |    IF exp THEN stmt ELSE stmt
+  stmt:    IF exp THEN stmt{}
+    |    IF exp THEN stmt ELSE stmt{}
     |    WHILE exp DO stmt
     |    variable ASSIGN exp SEMI{
           //entry_p ent = GetItem(theTable_p, $1->name);
@@ -200,7 +190,6 @@ int main (){
 
   theTable_p = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)FreeItem);  //creation of hash table
   yyparse(theTable_p);
-  //PrintTable(theTable_p);  //printing of hash table
+  PrintTable(theTable_p);  //printing of hash table
   DestroyTable(theTable_p); //memory de allocation of the hash table
-
 }
