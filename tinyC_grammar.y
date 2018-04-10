@@ -73,9 +73,13 @@ var_dec: var_dec single_dec
     ;
 
 single_dec: type ID SEMI {
-  entry_p      node_p;
+  entry_p node_p;
+  union val *values;
+  // values = malloc(sizeof(union val));
   node_p = malloc(sizeof(entry_p)); //memory allocation for the node
-  node_p = NewItem($2, $1, lineCount);  //creation of the node with the values provided
+  values = malloc(sizeof(union val));
+  values->i_value = 10;
+  node_p = NewItem($2, $1,values, lineCount);  //creation of the node with the values provided
   //PrintItem(node_p);
   g_hash_table_insert(theTable_p, node_p->name_p, node_p);  //insertion of node into the table
 }

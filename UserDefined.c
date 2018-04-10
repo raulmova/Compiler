@@ -12,7 +12,7 @@
 */
 
 
-entry_p NewItem (char * varName_p, char * type, unsigned int lineNumber){
+entry_p NewItem (char * varName_p, char * type, union val *value, unsigned int lineNumber){
                    entry_p ent = malloc(sizeof(entry_p));
                    ent->name_p = varName_p;
                    ent->type = type;
@@ -40,7 +40,7 @@ void SupportPrint (gpointer key_p, gpointer value_p, gpointer user_p){
  */
 
 int PrintItem (entry_p theEntry_p){
-  printf("Name: %s -- Type: %s --Line:%d\n",theEntry_p->name_p,theEntry_p->type, theEntry_p->lineNumber);
+  printf("Name: %s -- Type: %s --Value %d --Line:%d\n",theEntry_p->name_p,theEntry_p->type, theEntry_p->value, theEntry_p->lineNumber);
   return 1;
 }
 

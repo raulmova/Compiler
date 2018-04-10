@@ -183,7 +183,7 @@ int PrintTable (GHashTable * theTable_p);
  * @endcode
  *
  */
-entry_p NewItem (char * varName_p, char * type, unsigned int lineNumber);
+entry_p NewItem (char * varName_p, char * type, union val *value, unsigned int lineNumber);
 
 /**
  *
@@ -227,4 +227,4 @@ int FreeItem (entry_p theEntry_p);
  */
 int DestroyTable (GHashTable * theTable_p);
 int InsertItem(GHashTable * theTable_p, entry_p theEntry_p);
-node_p GetItem(GHashTable * theTable_p, char *key);
+entry_p GetItem(GHashTable * theTable_p, char *key);
