@@ -27,6 +27,7 @@
  */
 
 #include <glib.h>
+#include "types.h"
 
 
 /**
@@ -88,7 +89,7 @@ union val {            /* Note that both values are 32-bits in length */
  */
 typedef struct tableEntry_{
    char     * name_p;            /**< The name is just the string */
-   char *    type;               /**< Identifier type */
+   enum myTypes    type;               /**< Identifier type */
    unsigned int     lineNumber;  /**< Line number of the last reference */
    union val      value;       /**< Value of the symbol table element */
 }tableEntry;
@@ -183,7 +184,13 @@ int PrintTable (GHashTable * theTable_p);
  * @endcode
  *
  */
-entry_p NewItem (char * varName_p, char * type, unsigned int lineNumber);
+
+//entry_p NewItem (char * varName_p, char * type, unsigned int lineNumber);
+
+entry_p SymbolLookUp (GHashTable *theTable_p, char *name);
+void InsertSymbol(GHashTable *theTable_p, char * name, enum myTypes type, unsigned int lineNumber);
+
+
 
 /**
  *

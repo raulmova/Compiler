@@ -29,13 +29,13 @@ int yylex();
 }
 %parse-param{GHashTable * theTable_p}
 
-%define parse.error verbose       /*Used by the yyerror function for a more descriptive error reporting*/
+//%define parse.error verbose       /*Used by the yyerror function for a more descriptive error reporting*/
 
 /*****************************All the tokens return by the lex file*******************************/
 %token <s>ID
 %token SEMI
-%token <s>INTEGER
-%token <s>FLOAT
+%token <i>INTEGER
+%token <f>FLOAT
 %token IF
 %token THEN
 %token ELSE
@@ -57,7 +57,9 @@ int yylex();
 %token INT_NUM
 %token FLOAT_NUM
 
-%type <s> type variable exp simple_exp term factor stmt block
+%type <i> type
+%type <entry> variable factor term simple_exp exp stmt_seq block stmt
+
 
 /**** How is the TinyC GRAMMAR constructed     *****/
 
@@ -69,182 +71,104 @@ program:  var_dec stmt_seq
     ;
 
 var_dec: var_dec single_dec
-    | %empty
+    | {
+
+      }
     ;
 
 single_dec: type ID SEMI {
-  entry_p node_p;
-  union val values;
-  // values = malloc(sizeof(union val));
-  //node_p =  malloc(sizeof(entry_p)); //memory allocation for the node
-  //values = (union val*)malloc(sizeof(union val));
-  // values.i_value = 10;
-  // values->r_value =23.23;
-
-  node_p = NewItem($2, $1, lineCount);  //creation of the node with the values provided
-  //PrintItem(node_p);
-  g_hash_table_insert(theTable_p, node_p->name_p, node_p);  //insertion of node into the table
-
+                              if(SymbolLookUp(theTable_p, $2) == NULL){
+                                InsertSymbol(theTable_p, $2,$1,lineCount);
+                              }else{
+                                printf("Variable '%s' declared before. \n",$2);
+                                yyerror(theTable_p, "Error");
+                                return FALSE;
+                              }
 }
 ;
 
 type:  INTEGER{
-                $$ = "integer"; //tells to the hash table the type of the variable
+                $$ = integer; //tells to the hash table the type of the variable
               }
     |   FLOAT{
-                $$ = "real";
+                $$ = real;
               }
     ;
 
 stmt_seq: stmt_seq stmt
-    | %empty
+    | {
+
+      }
     ;
 
   stmt:  IF exp THEN stmt{
-                            if($2 != 0 ){
-                              $$ = $4 ;
-                            } else{
-                                $$ = "Error";
-                            }
+
                           }
     |    IF exp THEN stmt ELSE stmt{
-                                      if($2 != 0 ){
-                                        $$ = $4 ;
-                                      } else{
-                                          $$ = "Error";
-                                      }
+
                                     }
     |    WHILE exp DO stmt{
-                            if($2 != 0 ){
-                              $$ = $4 ;
-                            } else{
-                                $$ = "Error";
-                            }
+
                           }
     |    variable ASSIGN exp SEMI{
-                                    //printf("%s compre %s in line %d\n",$1,$3,lineCount );
-                                    if(strcmp($1,$3) == 0){
-                                      $$ = $1 ;
-                                    } else{
-                                      printf("Warning: Implicit type convertion in line %d \n", lineCount );
-                                        $$ = $1;
-                                    }
+
                                 }
     |    READ LPAREN variable RPAREN SEMI{
-                                            $$ ="";
                                           }
     |    WRITE LPAREN variable RPAREN SEMI{
-                                            $$ ="";
                                           }
     |     block
     ;
 
 block:  LBRACE stmt_seq RBRACE{
-                                $$ ="";
                               }
 
     ;
 
 exp:    simple_exp LT simple_exp{
-                                  $$ = $1;
                                 }
     |   simple_exp EQ simple_exp{
-                                  $$ = $1;
                                 }
     |   simple_exp{
-                    $$ = $1;
                   }
     ;
 
 simple_exp:   simple_exp PLUS term{
-                                    if(strcmp($1, "integer") == 0 && strcmp($3, "integer") == 0){
-                                      $$ = $1 ;
-                                    } else if(strcmp($1, "integer") == 0 && strcmp($3, "real") == 0){
-                                      $$ = $3;
-                                      printf("Warning: transform integer to real in line %d\n", lineCount);
-                                    } else if(strcmp($1, "real") == 0 && strcmp($3, "integer") == 0){
-                                      $$ = $1;
-                                      printf("Warning: transform integer to real in line %d\n", lineCount);
-                                    } else if(strcmp($1, "real") == 0 && strcmp($3, "real") == 0){
-                                      $$ = $1;
-                                    } else{
-                                        $$ = "Error";
-                                    }
+
                                   }
     |         simple_exp MINUS term{
-                                      if(strcmp($1, "integer") == 0 && strcmp($3, "integer") == 0){
-                                        $$ = $1 ;
-                                      } else if(strcmp($1, "integer") == 0 && strcmp($3, "real") == 0){
-                                        $$ = $3;
-                                        printf("Warning: transform integer to real in line %d\n", lineCount);
-                                      } else if(strcmp($1, "real") == 0 && strcmp($3, "integer") == 0){
-                                        $$ = $1;
-                                        printf("Warning: transform integer to real in line %d\n", lineCount);
-                                      } else if(strcmp($1, "real") == 0 && strcmp($3, "real") == 0){
-                                        $$ = $1;
-                                      } else{
-                                          $$ = "Error";
-                                      }
+
                                     }
       |         term{
-                      $$ = $1;
                     }
                                     ;
 
 term:   term TIMES factor{
-                          if(strcmp($1, "integer") == 0 && strcmp($3, "integer") == 0){
-                            $$ = $1 ;
-                          } else if(strcmp($1, "integer") == 0 && strcmp($3, "real") == 0){
-                            $$ = $3;
-                            printf("Warning: transform integer to real in line %d\n", lineCount);
-                          } else if(strcmp($1, "real") == 0 && strcmp($3, "integer") == 0){
-                            $$ = $1;
-                            printf("Warning: transform integer to real in line %d\n", lineCount);
-                          } else if(strcmp($1, "real") == 0 && strcmp($3, "real") == 0){
-                            $$ = $1;
-                          } else{
-                              $$ = "Error";
-                          }
+
                       }
         |   term DIV factor{
-                            if(strcmp($1, "integer") == 0 && strcmp($3, "integer") == 0){
-                              $$ = $1 ;
-                            } else if(strcmp($1, "integer") == 0 && strcmp($3, "real") == 0){
-                              $$ = $3;
-                              printf("Warning: transform integer to real in line %d\n", lineCount);
-                            } else if(strcmp($1, "real") == 0 && strcmp($3, "integer") == 0){
-                              $$ = $1;
-                              printf("Warning: transform integer to real in line %d\n", lineCount);
-                            } else if(strcmp($1, "real") == 0 && strcmp($3, "real") == 0){
-                              $$ = $1;
-                            } else{
-                                $$ = "Error";
-                            }
+
                           }
     |   factor{
-                  $$ = $1;
               }
     ;
 
 factor:   LPAREN exp RPAREN{
-                                  $$ = $2;
                             }
     |     INT_NUM{
-                      $$ = "integer";
                   }
     |     FLOAT_NUM{
-                      $$ = "real";
                     }
     |     variable{
-                      $$ = $1;
                   }
     ;
 
 variable: ID{
-          entry_p entry = GetItem(theTable_p, $1);
+          entry_p entry = SymbolLookUp(theTable_p, $1);
           if(entry != NULL){
               //printf("Variable YES declared %s\n", entry ->name_p );
-              $$ = entry->type;
+              //$$ = entry->type;
+              $$ = entry;
             }
             else{
               printf("No Variable '%s' declared before. ", $1);
