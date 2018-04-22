@@ -39,17 +39,18 @@
  * the symbol table entry.
  *
  */
-typedef struct item_{
-   char * key;                           /**< Hash table key is a string */
-   void * tableEntry;           /**< Pointer to a generic data structure */
-}item;
+/* typedef struct item_{
+   char * key;                           < Hash table key is a string 
+   void * tableEntry;           < Pointer to a generic data structure 
+}item; 
+*/
 
 /**
  * @typedef item_p
  *
  * @brief declare a pointer to the @c item @c structure
  */
-typedef struct item_ *item_p;        /**< Declaration of ptr to an entry */
+// typedef struct item_ *item_p;        /**< Declaration of ptr to an entry */
 
 /**
  * @union val
@@ -212,6 +213,7 @@ void InsertSymbol(GHashTable *theTable_p, char * name, enum myTypes type, unsign
  *          user-defined structure.
  */
 int FreeItem (entry_p theEntry_p);
+int FreeKey(char * key);
 
 /**
  *

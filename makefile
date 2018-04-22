@@ -39,7 +39,7 @@ debug:
 	$(YACC) -v $(TARGET_GRAM) -o $(TARGET_NAME).tab.c
 	$(LEX) $(TARGET_LEX)
 	$(CC) -DGRAMMAR $(COPT2) -o $(TARGET_NAME) $(TARGET_NAME).tab.c -ll `pkg-config --cflags --libs glib-2.0` $(TARGET_USER)
-	$(VAL) --leak-check=yes ./$(TARGET_NAME) <$(TEST)
+	$(VAL) --leak-check=full --show-leak-kinds=all ./$(TARGET_NAME) <$(TEST)
 
 
 clean:

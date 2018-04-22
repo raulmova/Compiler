@@ -32,7 +32,6 @@ void InsertSymbol(GHashTable *theTable_p, char * name, enum myTypes type, unsign
   entry->name_p = name;
   entry->type = type;
   entry->lineNumber = lineNumber;
-
   if(type == real) entry->value.r_value = 0.0;
   else entry->value.i_value = 0;
 
@@ -86,10 +85,11 @@ int InsertItem(GHashTable * theTable_p, entry_p theEntry_p){
 */
 
 int FreeItem (entry_p theEntry_p){
-//  free(theEntry_p->name_p);
+  free(theEntry_p->name_p);
   free(theEntry_p);
   return(EXIT_SUCCESS);
 }
+
 
 /*
   Memory deallocation of the hash table
@@ -97,19 +97,19 @@ int FreeItem (entry_p theEntry_p){
 
 int DestroyTable (GHashTable * theTable_p){
   g_hash_table_destroy(theTable_p);
-  return(EXIT_SUCCESS);
+  return (EXIT_SUCCESS);
 }
 
 entry_p SymbolLookUp(GHashTable *theTable_p, char *name){
-    entry_p item = malloc(sizeof(tableEntry));
-    entry_p symEntry = g_hash_table_lookup(theTable_p,name);
+    //entry_p item = malloc(sizeof(tableEntry));
+    return g_hash_table_lookup(theTable_p,name);
 
 
-    if(symEntry!= NULL){
-      item->name_p 		= symEntry->name_p;
-	    item->value 	= symEntry->value;
-	    item->type 		= symEntry->type;
-	    return item;
-    }
-    return NULL;
+    // if(symEntry!= NULL){
+    //   // item->name_p 		= symEntry->name_p;
+	  //   // item->value 	= symEntry->value;
+	  //   // item->type 		= symEntry->type;
+    //   return symEntry;
+    // }
+    // return NULL;
 }
