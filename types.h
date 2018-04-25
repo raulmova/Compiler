@@ -27,7 +27,7 @@
 
 #include <stdlib.h>
 
-#define BUFSIZE 256   // Buffer size for string management
+#define BUFFSIZE 256   // Buffer size for string management
 /**
  * @enum myTypes
  *

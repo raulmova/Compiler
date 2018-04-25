@@ -26,9 +26,23 @@
  *
  */
 
+#ifndef _USERDEFINED_H_
+#define _USERDEFINED_H_
+
 #include <glib.h>
 #include "types.h"
 
+#define BUFFER_SIZE 30
+
+
+
+typedef char*string;
+
+enum lists{
+  FALSE_LIST,
+  TRUE_LIST,
+  NEXT_LIST
+};
 
 /**
  * @struct item
@@ -39,18 +53,18 @@
  * the symbol table entry.
  *
  */
-/* typedef struct item_{
-   char * key;                           < Hash table key is a string 
-   void * tableEntry;           < Pointer to a generic data structure 
-}item; 
-*/
+typedef struct item_{
+   char * key;                           /**< Hash table key is a string */
+   void * tableEntry;           /**< Pointer to a generic data structure */
+}item;
 
 /**
  * @typedef item_p
  *
  * @brief declare a pointer to the @c item @c structure
  */
-// typedef struct item_ *item_p;        /**< Declaration of ptr to an entry */
+typedef struct item_ *item_p;        /**< Declaration of ptr to an entry */
+
 
 /**
  * @union val
@@ -65,6 +79,23 @@ union val {            /* Note that both values are 32-bits in length */
    int     i_value;                   /**< Interpret it as an integer */
    float   r_value;                      /**< Interpret it as a float */
 };
+
+
+typedef struct _line{
+  int quad;
+  string operation;
+  string arg1;
+  string arg2;
+  string destination;
+  string code;
+  string true_list;
+  string false_list;
+  string next_list;
+}Line;
+
+
+struct _line lines[100];
+
 
 /**
  * @struct tableEntry
@@ -88,11 +119,13 @@ union val {            /* Note that both values are 32-bits in length */
  *    efficient if smaller types are allowed.
  *
  */
+
 typedef struct tableEntry_{
    char     * name_p;            /**< The name is just the string */
    enum myTypes    type;               /**< Identifier type */
    unsigned int     lineNumber;  /**< Line number of the last reference */
    union val      value;       /**< Value of the symbol table element */
+   Line p_line;
 }tableEntry;
 
 /**
@@ -186,11 +219,11 @@ int PrintTable (GHashTable * theTable_p);
  *
  */
 
-//entry_p NewItem (char * varName_p, char * type, unsigned int lineNumber);
+entry_p NewItem (char * varName_p, char * type, unsigned int lineNumber);
 
 entry_p SymbolLookUp (GHashTable *theTable_p, char *name);
 void InsertSymbol(GHashTable *theTable_p, char * name, enum myTypes type, unsigned int lineNumber);
-
+void InsertSymbolTemp(GHashTable *theTable_p, char * name, enum myTypes type);
 
 
 /**
@@ -213,7 +246,6 @@ void InsertSymbol(GHashTable *theTable_p, char * name, enum myTypes type, unsign
  *          user-defined structure.
  */
 int FreeItem (entry_p theEntry_p);
-int FreeKey(char * key);
 
 /**
  *
@@ -237,3 +269,16 @@ int FreeKey(char * key);
 int DestroyTable (GHashTable * theTable_p);
 int InsertItem(GHashTable * theTable_p, entry_p theEntry_p);
 entry_p GetItem(GHashTable * theTable_p, char *key);
+entry_p newTempConstant(GHashTable *theTable_p, union val value, enum myTypes type);
+void SymbolUpdate(GHashTable *theTable_p, char * name, enum myTypes type, union val value);
+
+void printLines();
+int getQuadWhile();
+void newTemp(char* op, entry_p arg1, entry_p arg2, entry_p top);
+void putNextQuad(entry_p arg, int list, int increment);
+void generateCode(char* op, entry_p arg1, entry_p arg2, char* dest, entry_p top );
+void generateCodeCond(entry_p arg, char* dest, entry_p top);
+void backpathList(entry_p e, int list, int nQuad);
+void mergeWithNextList(entry_p arg1, int l1, entry_p arg2, entry_p top);
+
+#endif
