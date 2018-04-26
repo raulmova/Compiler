@@ -102,6 +102,25 @@ typedef struct tableEntry_{
  */
 typedef struct tableEntry_ *entry_p; /**< Declaration of ptr to an entry */
 
+typedef struct _line{
+    char * place;
+    GList * true_list;
+    GList * false_list;
+    GList * next_list;
+}line;
+
+typedef struct _line * line_p;
+
+typedef struct _quad
+{
+    char * operation;
+    char * arg1;
+    char * arg2;
+    char * destination;
+}quad;
+
+typedef struct _quad * quad_p;
+
 /**
  *
  * @brief Prints the contents of the symbol table entry.

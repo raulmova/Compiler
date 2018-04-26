@@ -10,12 +10,12 @@
 #include <stdio.h>
 #include <glib.h>
 
-
 /*Extern variable declared on the lex file to handle the program line*/
 extern int lineCount;
 
 //Variables
-
+int quadLine = 0;
+GList * quadList = NULL;
 
   /* Function definitions */
 void yyerror(GHashTable * theTable_p, const char* const message);
@@ -26,6 +26,7 @@ int yylex();
     float f;
     int i;
     entry_p entry;
+    line_p line;
 }
 %parse-param{GHashTable * theTable_p}
 
@@ -58,7 +59,8 @@ int yylex();
 %token FLOAT_NUM
 
 %type <i> type
-%type <entry> variable factor term simple_exp exp stmt_seq block stmt
+%type <line> variable factor term simple_exp exp stmt_seq block stmt
+
 
 
 /**** How is the TinyC GRAMMAR constructed     *****/
@@ -120,7 +122,10 @@ stmt_seq: stmt_seq M stmt
 
                           }
     |    variable ASSIGN exp SEMI {
-                                    
+      // $$=$3;
+      
+                                   printf("Esto es un %s", $1->place);
+                                   free($1);
                                   }
     |    READ LPAREN variable RPAREN SEMI {
 
@@ -140,6 +145,7 @@ exp:    simple_exp LT simple_exp{
     |   simple_exp EQ simple_exp{
                                 }
     |   simple_exp{
+      $$ = $1;
                   }
     ;
 
@@ -149,9 +155,9 @@ simple_exp:   simple_exp PLUS term{
     |         simple_exp MINUS term{
 
                                     }
-      |         term{
-                    }
-                                    ;
+    |         term{$$ = $1;
+                  }
+    ;
 
 term:   term TIMES factor{
 
@@ -159,7 +165,7 @@ term:   term TIMES factor{
     |   term DIV factor{
 
                           }
-    |   factor{
+    |   factor{$$ = $1;
               }
     ;
 
@@ -169,16 +175,22 @@ factor:   LPAREN exp RPAREN{
                   }
     |     FLOAT_NUM{
                     }
-    |     variable{
+    |     variable{$$ = $1;
+                    printf("Esto es un %s", $1->place);
                   }
     ;
 
 variable: ID{
           entry_p entry = SymbolLookUp(theTable_p, $1);
+          line_p l = malloc(sizeof(line_p));
           if(entry != NULL){
               //printf("Variable YES declared %s\n", entry ->name_p );
               //$$ = entry->type;
-              $$ = entry;
+              
+              l->place = entry->name_p;
+              //printf("Esto es un %s", l->place);
+              $$ = l;
+
             }
             else{
               printf("No Variable '%s' declared before. ", $1);
