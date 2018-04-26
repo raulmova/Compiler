@@ -67,13 +67,22 @@ int yylex();
 statement_list: program        { printf ("No errors on the program.\n");}
     ;
 
+M : %empty{
+
+          }
+  ;
+        
+N : %empty{
+
+          }
+  ;
 program:  var_dec stmt_seq
     ;
 
 var_dec: var_dec single_dec
-    | {
+    | %empty{
 
-      }
+            }
     ;
 
 single_dec: type ID SEMI {
@@ -95,25 +104,26 @@ type:  INTEGER{
               }
     ;
 
-stmt_seq: stmt_seq stmt
-    | {
+stmt_seq: stmt_seq M stmt
+    | %empty{
 
-      }
+            }
     ;
 
-  stmt:  IF exp THEN stmt{
+  stmt:  IF exp THEN M stmt{
 
                           }
-    |    IF exp THEN stmt ELSE stmt{
+    |    IF exp THEN M stmt N ELSE M stmt{
 
                                     }
-    |    WHILE exp DO stmt{
+    |    WHILE M exp DO M stmt{
 
                           }
-    |    variable ASSIGN exp SEMI{
+    |    variable ASSIGN exp SEMI {
+                                    
+                                  }
+    |    READ LPAREN variable RPAREN SEMI {
 
-                                }
-    |    READ LPAREN variable RPAREN SEMI{
                                           }
     |    WRITE LPAREN variable RPAREN SEMI{
                                           }
@@ -146,7 +156,7 @@ simple_exp:   simple_exp PLUS term{
 term:   term TIMES factor{
 
                       }
-        |   term DIV factor{
+    |   term DIV factor{
 
                           }
     |   factor{
