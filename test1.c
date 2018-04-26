@@ -13,12 +13,12 @@ int h7;
 
 /* There is no "main" program, just blocks */
 /* { */
-{
+
  h3 := 10.0;
  i := 0;
 
  h := j/i;
  h2 := h / h3;
  h := 100*h;
-}
+
 /* } */

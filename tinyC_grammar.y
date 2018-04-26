@@ -122,7 +122,7 @@ stmt_seq:
 
                         }
       | %empty{
-        
+
       }
     ;
 
@@ -234,12 +234,12 @@ stmt_seq:
     |    WRITE LPAREN variable RPAREN SEMI{
                                           }
     |     block {
-          //$$ = $1;
+        //  $$ = $1;
     }
     ;
 
 block:  LBRACE stmt_seq RBRACE{
-                              //  $$ = $2;
+
                               }
 
     ;
@@ -480,7 +480,6 @@ void generateCode(char* op, entry_p arg1, entry_p arg2, char* dest, entry_p top 
   sprintf(tempBuffer, "%s %s %s %s", op, arg1->name_p, arg2->name_p, dest);
   char* tempString = (char*)malloc(sizeof(char)*strlen(tempBuffer) + 1);
   strcpy(tempString, tempBuffer);
-
   top->p_line.code = tempString;
   top->p_line.next_list = NULL;
 
