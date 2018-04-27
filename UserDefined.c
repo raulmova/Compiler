@@ -160,8 +160,6 @@ int Backpatch(GList * quads, GList * list, int quadNumber){
   return EXIT_SUCCESS;
 }
 
-<<<<<<< HEAD
-
 // CODE GENERATION functions
 void newQuad(char * op, char * arg1, char * arg2, char * dest, GList * quadList){
     quad_p quadToAdd = malloc(sizeof(quad));
@@ -180,50 +178,4 @@ char * newTemp(int index){
   strcpy(tempString, tempBuffer);
 
   return tempString;
-=======
-GList * NewList(int quad){
-  GList * list = NULL;
-  return g_list_append(list, GINT_TO_POINTER(quad));
-  ;
-}
-
-GList * MergeList(GList * list1, GList * list2){
-  return g_list_concat(list1, list2);
-}
-
-int PrintList(GList * list){
-  g_list_foreach(list, (GFunc)SupportPrintList, NULL);
-  return (EXIT_SUCCESS);
-}
-
-/*
-Support function needed by GLib
- */
-void SupportPrintList(gpointer data, gpointer user_data){
-  PrintItemList(GPOINTER_TO_INT(data));
-}
-
-/*
- Actual printing
- */
-
-int PrintItemList(int i){
-  printf("List %d \n",i);
-  return 1;
-}
-
-int Backpatch(GList * quads, GList * list, int quadNumber){
-  GList *l = list;
-  while (l != NULL)
-  {
-    GList * next = l->next;
-    quad_p patch = g_list_nth_data(quads, GPOINTER_TO_INT(l->data));
-    char buffer[16];
-    sprintf(buffer, "goto %d", quadNumber);
-    strcpy(patch->destination, buffer);
-
-    l = next;
-  }
-  return EXIT_SUCCESS;
->>>>>>> 4b5f395143ee0e288dec48529b184afc674b1bb2
 }

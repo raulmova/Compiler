@@ -133,7 +133,7 @@ stmt_seq: stmt_seq M stmt
 
                           }
     |    variable ASSIGN exp SEMI {
-<<<<<<< HEAD
+
                                   // $$=$3;
                                    //printf("Esto es un %s\n", $1->place);
                                    //TODO add type checkng and typeconversion
@@ -146,11 +146,10 @@ stmt_seq: stmt_seq M stmt
                                      yyerror(theTable_p,"Error");
                                      return FALSE;
                                    }
-=======
+
       // $$=$3;
-      
+
                                    //printf("Esto es un %s", $1->place);
->>>>>>> 4b5f395143ee0e288dec48529b184afc674b1bb2
                                    free($1);
                                   }
     |    READ LPAREN variable RPAREN SEMI {

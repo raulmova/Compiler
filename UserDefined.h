@@ -267,20 +267,7 @@ void SupportPrintList(gpointer data, gpointer user_data);
 
 
 int PrintItemList(int i);
-<<<<<<< HEAD
 
 //CODE GENERATION functions
 void newQuad(char * op, char * arg1, char * arg2, char * dest, GList * quadList);
 char * newTemp(int index);
-=======
-GList * NewList(int quad);
-
-GList * MergeList(GList *list1, GList *list2);
-
-int PrintList(GList *list);
-
-void SupportPrintList(gpointer data, gpointer user_data);
-
-
-int PrintItemList(int i);
->>>>>>> 4b5f395143ee0e288dec48529b184afc674b1bb2
