@@ -256,3 +256,14 @@ int FreeKey(char * key);
 int DestroyTable (GHashTable * theTable_p);
 int InsertItem(GHashTable * theTable_p, entry_p theEntry_p);
 entry_p GetItem(GHashTable * theTable_p, char *key);
+
+GList * NewList(int quad);
+
+GList * MergeList(GList *list1, GList *list2);
+
+int PrintList(GList *list);
+
+void SupportPrintList(gpointer data, gpointer user_data);
+
+
+int PrintItemList(int i);

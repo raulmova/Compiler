@@ -124,7 +124,7 @@ stmt_seq: stmt_seq M stmt
     |    variable ASSIGN exp SEMI {
       // $$=$3;
       
-                                   printf("Esto es un %s", $1->place);
+                                   //printf("Esto es un %s", $1->place);
                                    free($1);
                                   }
     |    READ LPAREN variable RPAREN SEMI {
