@@ -104,6 +104,8 @@ typedef struct tableEntry_ *entry_p; /**< Declaration of ptr to an entry */
 
 typedef struct _line{
     char * place;
+    enum myTypes    type;
+    union val      value;
     GList * true_list;
     GList * false_list;
     GList * next_list;

@@ -14,6 +14,7 @@ int h7;
 /* There is no "main" program, just blocks */
 {
 i:= 0;
+j:= 23;
 h3:= 10.0;
 
 h:= j/i;
