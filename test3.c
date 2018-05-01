@@ -17,7 +17,7 @@ float j;
      j := j - 1.1;
 
      /* Will flag an error below */
-     i := i++;
+     /*i := i++;*/
   }
 
 }

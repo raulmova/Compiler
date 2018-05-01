@@ -1,5 +1,3 @@
-/* Definitions go first */
-
 int j;
 float i;
 int h;
@@ -26,18 +24,13 @@ int i7;
 int h7;
 
 /* There is no "main" program, just blocks */
-{
+{   
+i:= 0;
 
- i := 0;
-
-  while (i < 10) do {
-  j := i * 10;
-  i := i + 1;
-
-
- h := j / 7;
- h2 := h / 64;
- h := 100.1 * h;
-
-  }
+    if (i < 10)
+        then{
+            h7:= 2;
+        }else{
+             h7 :=6;       
+        }
 }

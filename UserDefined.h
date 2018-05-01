@@ -103,6 +103,7 @@ typedef struct tableEntry_{
 typedef struct tableEntry_ *entry_p; /**< Declaration of ptr to an entry */
 
 typedef struct _line{
+    int quad;
     char * place;
     enum myTypes    type;
     union val      value;
@@ -270,6 +271,14 @@ void SupportPrintList(gpointer data, gpointer user_data);
 
 int PrintItemList(int i);
 
-//CODE GENERATION functions
-void newQuad(char * op, char * arg1, char * arg2, char * dest, GList * quadList);
+int Backpatch(GList * list, int quadNumber);
+
+void newQuad(char * op, char * arg1, char * arg2, char * dest);
+
 char * newTemp(int index);
+
+int PrintQuads();
+
+void SupportPrintQuads(gpointer data, gpointer user_data);
+
+int PrintItemQuads(quad_p quad);

@@ -26,7 +26,8 @@ entry_p NewItem (char * varName_p, char * type, unsigned int lineNumber){
                  }
 
 */
-
+GList * quadList = NULL;
+int lineC = 0;
 void InsertSymbol(GHashTable *theTable_p, char * name, enum myTypes type, unsigned int lineNumber){
   entry_p entry = malloc(sizeof(tableEntry));
   entry->name_p = name;
@@ -116,8 +117,8 @@ entry_p SymbolLookUp(GHashTable *theTable_p, char *name){
 
 GList * NewList(int quad){
   GList * list = NULL;
-  return g_list_append(list, GINT_TO_POINTER(quad));
-  ;
+  list = g_list_append(list, GINT_TO_POINTER(quad));
+  return list;
 }
 
 GList * MergeList(GList * list1, GList * list2){
@@ -125,6 +126,7 @@ GList * MergeList(GList * list1, GList * list2){
 }
 
 int PrintList(GList * list){
+  printf("list: ");
   g_list_foreach(list, (GFunc)SupportPrintList, NULL);
   return (EXIT_SUCCESS);
 }
@@ -141,19 +143,21 @@ void SupportPrintList(gpointer data, gpointer user_data){
  */
 
 int PrintItemList(int i){
-  printf("List %d \n",i);
+  printf("%d, ",i);
   return 1;
 }
 
-int Backpatch(GList * quads, GList * list, int quadNumber){
+int Backpatch(GList * list, int quadNumber){
   GList *l = list;
   while (l != NULL)
   {
     GList * next = l->next;
-    quad_p patch = g_list_nth_data(quads, GPOINTER_TO_INT(l->data));
+    quad_p patch = g_list_nth_data(quadList, GPOINTER_TO_INT(l->data));
     char buffer[16];
     sprintf(buffer, "goto %d", quadNumber);
-    strcpy(patch->destination, buffer);
+    char *tempString = (char *)malloc(sizeof(char) * 16);
+    strcpy(tempString, buffer);
+    patch->destination = tempString;
 
     l = next;
   }
@@ -161,13 +165,12 @@ int Backpatch(GList * quads, GList * list, int quadNumber){
 }
 
 // CODE GENERATION functions
-void newQuad(char * op, char * arg1, char * arg2, char * dest, GList * quadList){
+void newQuad(char * op, char * arg1, char * arg2, char * dest){
     quad_p quadToAdd = malloc(sizeof(quad));
-    strcpy(quadToAdd->operation, op );
-    strcpy(quadToAdd->arg1, arg1 );
-    strcpy(quadToAdd->arg2, arg2 );
-    strcpy(quadToAdd->destination, dest );
-
+    quadToAdd->operation = op ;
+    quadToAdd->arg1 = arg1 ;
+    quadToAdd->arg2 = arg2 ;
+    quadToAdd->destination = dest ;
     quadList = g_list_append(quadList, quadToAdd);
 }
 
@@ -178,4 +181,28 @@ char * newTemp(int index){
   strcpy(tempString, tempBuffer);
 
   return tempString;
+}
+
+int PrintQuads()
+{
+  g_list_foreach(quadList, (GFunc)SupportPrintQuads, NULL);
+  return (EXIT_SUCCESS);
+}
+
+/*
+Support function needed by GLib
+ */
+void SupportPrintQuads(gpointer data, gpointer user_data)
+{
+  PrintItemQuads(data);
+}
+
+/*
+ Actual printing
+ */
+
+int PrintItemQuads(quad_p quad)
+{
+printf("%d: %s %s %s %s\n",lineC++, quad->destination, quad->operation, quad->arg1, quad->arg2);
+  return 1;
 }

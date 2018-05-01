@@ -25,7 +25,7 @@ TARGET_LEX 	= analizerTinyC2.l
 TARGET_GRAM = tinyC_grammar.y
 TARGET_NAME	= tiny
 TARGET_USER	= UserDefined.c
-TEST		= test1.c
+TEST		= test5.c
 #
 # Rule definitioans for target builds
 #
@@ -39,7 +39,7 @@ debug:
 	$(YACC) -v $(TARGET_GRAM) -o $(TARGET_NAME).tab.c
 	$(LEX) $(TARGET_LEX)
 	$(CC) -DGRAMMAR $(COPT2) -o $(TARGET_NAME) $(TARGET_NAME).tab.c -ll `pkg-config --cflags --libs glib-2.0` $(TARGET_USER)
-	$(VAL) --leak-check=yes ./$(TARGET_NAME) <$(TEST)
+	$(VAL) --leak-check=yes --track-origins=yes ./$(TARGET_NAME) <$(TEST)
 
 
 clean:

@@ -13,10 +13,13 @@
 /*Extern variable declared on the lex file to handle the program line*/
 extern int lineCount;
 
+int incrementQuad();
+
+int getQuadLine();
 //Variables
 int quadLine = 0;
 int indexForTemp = 0;
-GList * quadList = NULL;
+
 
   /* Function definitions */
 void yyerror(GHashTable * theTable_p, const char* const message);
@@ -60,7 +63,7 @@ int yylex();
 %token <f>FLOAT_NUM
 
 %type <i> type
-%type <line> variable factor term simple_exp exp stmt_seq block stmt single_dec
+%type <line> variable factor term simple_exp exp stmt_seq block stmt single_dec var_dec N M
 
 
 
@@ -70,21 +73,26 @@ int yylex();
 statement_list: program        { printf ("No errors on the program.\n");}
     ;
 
-M : %empty{
-            //$$->quad = incrementQuad();
+M: %empty{  
+            $$ = (line_p) malloc(sizeof(line));
+            $$->quad = quadLine;
           }
   ;
 
-N : %empty{
-            //$$->next_list = newList(incrementQuad());
+N: %empty{
+            $$ = (line_p) malloc(sizeof(line));
+            $$->next_list= NULL;  
+            $$->next_list = NewList(quadLine);
           }
   ;
-program:  var_dec stmt_seq{
-
-                          }
+program:  var_dec stmt_seq M{
+                              Backpatch($2->next_list, $3->quad);
+                            }
     ;
 
-var_dec: var_dec single_dec
+var_dec: var_dec single_dec{
+                              $$ = $2;
+                            }
     | %empty{
 
             }
@@ -110,103 +118,157 @@ type:  INTEGER{
               }
     ;
 
-stmt_seq: stmt_seq M stmt
+stmt_seq: stmt_seq M stmt{
+                            $$ = (line_p) malloc(sizeof(line));
+                            $$->next_list = NULL;
+                            //printf("Quad: %d", $2->quad);
+                            //PrintList($$->next_list);
+                            Backpatch($1->next_list, $2->quad);
+                            $$->next_list = $3->next_list;
+                            //PrintList($3->next_list);
+                          }
     | %empty{
-              //backpatch($1->next_list, $2->quad);
-              //$$->next_list = $3->next_list;
+              $$ = (line_p) malloc(sizeof(line));
+              $$->next_list = NULL;  
             }
     ;
 
-  stmt:  IF exp THEN M stmt{
-                              //backpatch($2->true_list, quadLine );
-                              //$$->next_list = mergeList($2->false_list, $5->next_list);
-                          }
-    |    IF exp THEN M stmt N ELSE M stmt{
-                                      //backpatch($2->true_list, $4->quad);
-                                      //backpatch($2->false_list, $8->quad);
-                                      //$$->next_list = mergeList($5, mergeList($6->next_list, $9->next_list));
+stmt:  IF exp THEN M stmt{
+                            $$ = (line_p) malloc(sizeof(line));
+                            $$->next_list = NULL;
+                            Backpatch($2->true_list, $4->quad );
+                            $$->next_list = MergeList($2->false_list, $5->next_list);
+                        }
+  |    IF exp THEN M stmt N ELSE M stmt{  
+                                        $$ = (line_p) malloc(sizeof(line));
+                                        $$->next_list = NULL;
+                                        //PrintList($2-> true_list);
+                                        Backpatch($2->true_list, $4->quad);
+                                        Backpatch($2->false_list, $8->quad);
+                                        $$->next_list = MergeList($5->next_list, MergeList($6->next_list, $9->next_list));
 
+                                        }
+  |    WHILE M exp DO M stmt{
+                                $$ = (line_p) malloc(sizeof(line));
+                                $$->next_list = NULL;
+                                //PrintList($3->true_list);
+                                Backpatch($3->true_list, $5->quad);
+                                $$->next_list = $3->false_list;
+                                char buffer[16];
+                                sprintf(buffer, "goto %d", $2->quad);
+                                char *tempString = (char *)malloc(sizeof(char) * 16);
+                                strcpy(tempString, buffer);
+                                
+                                newQuad(tempString,"","", "");
+                                incrementQuad();
+                                //gen('goto_', $2->quad);
+
+                        }
+  |    variable ASSIGN exp SEMI {
+                                  entry_p entry = SymbolLookUp(theTable_p, $1->place);
+                                  if(entry != NULL){
+                                      if($1->type == $3->type){
+                                      if($1->type == real){
+                                        entry->value.r_value = $3->value.r_value;
+                                        $1->value.r_value = $3->value.r_value;
+                                      }
+                                      else if($1->type == integer){
+                                        entry->value.i_value = $3->value.i_value;
+                                        $1->value.r_value = $3->value.i_value;
+                                      }
                                     }
-    |    WHILE M exp DO M stmt{
-                                  //backpatch($3->true_list, $5->quad);
-                                  //$$->next_list = $3->false_list;
-                                  //gen('goto_', $2->quad);
-
-                          }
-    |    variable ASSIGN exp SEMI {
-                                   entry_p entry = SymbolLookUp(theTable_p, $1->place);
-                                   if(entry != NULL){
-                                       if($1->type == $3->type){
-                                        if($1->type == real){
-                                          entry->value.r_value = $3->value.r_value;
-                                          $1->value.r_value = $3->value.r_value;
-                                        }
-                                        else if($1->type == integer){
-                                          entry->value.i_value = $3->value.i_value;
-                                          $1->value.r_value = $3->value.i_value;
-                                        }
+                                    else{
+                                      if($1->type == integer && $3->type == real){
+                                        yyerror(theTable_p,"Loss of Precision. Casting Float to Integer.");
+                                        entry->value.i_value = (int)$3->value.r_value;
+                                        $1->value.i_value = (int)$3->value.r_value;
                                       }
-                                      else{
-                                        if($1->type == integer && $3->type == real){
-                                          yyerror(theTable_p,"Loss of Precision. Casting Float to Integer.");
-                                          entry->value.i_value = (int)$3->value.r_value;
-                                          $1->value.i_value = (int)$3->value.r_value;
-                                        }
-                                        else if($1->type == real && $3->type == integer){
-                                          yyerror(theTable_p,"Warning, implicit casting between int and float");
-                                          entry->value.r_value = (float)$3->value.i_value;
-                                          $1->value.r_value = (float)$3->value.i_value;
-                                        }
+                                      else if($1->type == real && $3->type == integer){
+                                        yyerror(theTable_p,"Warning, implicit casting between int and float");
+                                        entry->value.r_value = (float)$3->value.i_value;
+                                        $1->value.r_value = (float)$3->value.i_value;
                                       }
-                                      //PrintItem(entry);
-                                       //gen(p->name_p ':=' $3->place)
-                                       //newQuad("=",entry->name_p,$3->place,"-",quadList);
-                                   }
-                                   else{
-                                     printf("No Variable '%s' declared before. ", $1->place);
-                                     yyerror(theTable_p,"Error");
-                                     return FALSE;
-                                   }
-
-                                  // free($1);
+                                    }
+                                    //PrintItem(entry);
+                                      //gen(p->name_p ':=' $3->place)
+                                      newQuad("=",$3->place,"", entry->name_p);
+                                      incrementQuad();
+                                      //PrintQuads(quadList);
                                   }
-    |    READ LPAREN variable RPAREN SEMI {
+                                  else{
+                                    printf("No Variable '%s' declared before. ", $1->place);
+                                    yyerror(theTable_p,"Error");
+                                    return FALSE;
+                                  }
 
-                                          }
-    |    WRITE LPAREN variable RPAREN SEMI{
-                                          }
-    |     block{
-                //$$->next_list = $1->next_list;
-    }
-    ;
+                                }
+  |    READ LPAREN variable RPAREN SEMI {
+
+                                        }
+  |    WRITE LPAREN variable RPAREN SEMI{
+                                        }
+  |     block{
+              $$ = (line_p) malloc(sizeof(line));
+              $$->next_list = NULL;
+              $$->next_list = $1->next_list;
+  }
+  ;
 
 block:  LBRACE stmt_seq RBRACE{
-                                //$$->next_list = $2->next_list;
+                                $$ = (line_p) malloc(sizeof(line));
+                                $$->next_list = NULL;
+                                $$->next_list = $2->next_list;
                               }
 
     ;
 
 exp:    simple_exp LT simple_exp{
-                                  //$$->true_list = newList(incrementQuad());
-                                  //$$->false_list = newList(incrementQuad() + 1);
+                                  $$ = (line_p) malloc(sizeof(line));
+                                  $$->next_list = NULL;
+                                  $$->true_list = NULL;
+                                  $$->false_list = NULL;
+                                  $$->true_list = NewList(quadLine);
+                                  $$->false_list = NewList(quadLine+1);
                                   //gen('if' $1->place < $3->place 'goto_');
+                                  newQuad("<",$1->place,$3->place, "goto_");
+                                  incrementQuad();
+                                  newQuad("","","", "goto_");
+                                  incrementQuad();
                                   //gen(goto_);
                                 }
     |   simple_exp EQ simple_exp{
-                                  //$$->true_list = newList(incrementQuad());
-                                  //$$->false_list = newList(incrementQuad() + 1);
+                                  $$ = (line_p) malloc(sizeof(line));
+                                  $$->next_list = NULL;
+                                  $$->true_list = NULL;
+                                  $$->false_list = NULL;
+                                  $$->true_list = NewList(quadLine);
+                                  $$->false_list = NewList(quadLine+1);
                                   //gen('if' $1->place == $3->place 'goto_');
+                                  newQuad("==",$1->place,$3->place, "goto_");
+                                  incrementQuad();
+                                  newQuad("","","", "goto_");
+                                  incrementQuad();
                                   //gen(goto_);
                                 }
     |   simple_exp{
-                    //$$->next_list = $1->next_list;
-
-                    $$ = $1;
+                    // $$ = (line_p) malloc(sizeof(line));
+                    // $$->next_list = NULL;
+                    // $$->true_list = NULL; 
+                    // $$->false_list = NULL;                              
+                    // $$->next_list = $1->next_list;
+                    // $$->place = $1->place;
+                    
+                    // $$->true_list = $1->true_list; 
+                    //  $$->false_list = $1->false_list;
+                    $$ = $1; 
                   }
     ;
 
 simple_exp:   simple_exp PLUS term{
-
+                                      $$ = (line_p) malloc(sizeof(line));
+                                      $$->next_list = NULL;
+                                      $$->true_list = NULL; 
+                                      $$->false_list = NULL;
                                       if($1->type == $3->type){
                                         if($3->type == real){   // floating types
                                           $$->type = real;
@@ -225,13 +287,19 @@ simple_exp:   simple_exp PLUS term{
                                         }
                                       }
                                       //TODO add typechecking - conversion
-                                      //$$->place = newTemp(indexForTemp);
-                                      //indexForTemp = indexForTemp + 1;
+                                      $$->place = newTemp(indexForTemp);
+                                      indexForTemp = indexForTemp + 1;
                                       //gen($$->place ':=' $1->place '+' $3->place)
+                                      newQuad("+",$1->place, $3->place, $$->place);
+                                      incrementQuad();
+                                  
 
                                   }
     |         simple_exp MINUS term{
-
+                                      $$ = (line_p) malloc(sizeof(line));
+                                      $$->next_list = NULL;
+                                      $$->true_list = NULL;
+                                      $$->false_list = NULL;
                                       if($1->type == $3->type){
                                         if($3->type == real){   // floating types
                                           $$->type = real;
@@ -250,20 +318,25 @@ simple_exp:   simple_exp PLUS term{
                                         }
                                       }
                                       //TODO add typechecking - conversion
-                                      //$$->place = newTemp(indexForTemp);
-                                      //indexForTemp = indexForTemp + 1;
+                                      $$->place = newTemp(indexForTemp);
+                                      indexForTemp = indexForTemp + 1;
                                       //gen($$->place ':=' $1->place '-' $3->place)
+                                      newQuad("-",$1->place, $3->place, $$->place);
                                     }
     |         term{
+                    
                     $$ = $1;
                   }
     ;
 
 term:   term TIMES factor{
+                            $$ = (line_p) malloc(sizeof(line));
                             //TODO add typechecking - conversion
-                            //$$->place = newTemp(indexForTemp);
-                            //indexForTemp = indexForTemp + 1;
+                            $$->place = newTemp(indexForTemp);
+                            indexForTemp = indexForTemp + 1;
                             //gen($$->place ':=' $1->place '*' $3->place)
+                            newQuad("*",$1->place, $3->place, $$->place);
+                            incrementQuad();
 
                             if($1->type == $3->type){ //equal types
                             if($3->type == real){   // floating types
@@ -285,6 +358,7 @@ term:   term TIMES factor{
 
                       }
     |   term DIV factor{
+                          $$ = (line_p) malloc(sizeof(line));
                           printf("Division entre %d y %d\n",$1->type,$3->type);
                           if($3->type == real){
                             printf("Divison factor value : %f\n", $3->value.r_value);
@@ -322,9 +396,11 @@ term:   term TIMES factor{
                             }
 
                             //TODO add typechecking - conversion
-                            //$$->place = newTemp(indexForTemp);
-                            //indexForTemp = indexForTemp + 1;
+                            $$->place = newTemp(indexForTemp);
+                            indexForTemp = indexForTemp + 1;
                             //gen($$->place ':=' $1->place '/' $3->place)
+                            newQuad("/",$1->place, $3->place, $$->place);
+                            incrementQuad();
 
 
                           }
@@ -334,14 +410,20 @@ term:   term TIMES factor{
     ;
 
 factor:   LPAREN exp RPAREN{
-                              //$$->next_list = $2->next_list;
-                              $$ = $2;
+                              // $$ = (line_p) malloc(sizeof(line));
+                              // $$->true_list = NULL;
+                              // $$->false_list = NULL;
+                              // $$->next_list = NULL;
+                              // $$->true_list = $2->true_list;
+                              // $$->false_list = $2->false_list;
+                              // $$->next_list = $2->next_list;
+                              
+                              $$ = $2;  
                             }
     |     INT_NUM{
                       line_p l = malloc(sizeof(struct _line));
                       l->value.i_value = $1;
                       l->type = integer;
-
                       char ts[30];
                       sprintf(ts, "%d", l->value.i_value);
                       char *s = (char*)malloc(sizeof(char)*strlen(ts) + 1);
@@ -409,8 +491,9 @@ void yyerror(GHashTable * theTable_p, const char* const message){
 }
 
 int incrementQuad(){
+  int quad = quadLine;
   quadLine = quadLine + 1;
-  return quadLine;
+  return quad;
 }
 
 int getQuadLine(){
@@ -425,8 +508,10 @@ int main (){
   theTable_p = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)FreeItem);  //creation of hash table
   if(yyparse(theTable_p) == 0){
     printf("No Errors\n");
-    PrintTable(theTable_p);  //printing of hash table
+    //PrintTable(theTable_p);  //printing of hash table
   }
+  printf("Code gen:\n");
+  PrintQuads();
   //PrintTable(theTable_p);  //printing of hash table
   DestroyTable(theTable_p); //memory de allocation of the hash table
 }
