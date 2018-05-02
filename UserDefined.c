@@ -130,7 +130,7 @@ int Backpatch(GList * list, int quadNumber){
     GList * next = l->next;
     quad_p patch = g_list_nth_data(quadList, GPOINTER_TO_INT(l->data));
     char buffer[16];
-    sprintf(buffer, "goto %d", quadNumber);
+    sprintf(buffer, "goto_%d", quadNumber);
     char *tempString = (char *)malloc(sizeof(char) * 16);
     strcpy(tempString, buffer);
     patch->destination = tempString;

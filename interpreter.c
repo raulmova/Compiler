@@ -15,15 +15,29 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
                 dest = SymbolLookUp(theTable_p, quad->destination);
                 arg1 = SymbolLookUp(theTable_p, quad->arg1);
                 arg2 = SymbolLookUp(theTable_p, quad->arg2);
-                if (arg2 == NULL)
-                {
+                if (arg1 == NULL && arg2 == NULL){
                     if (dest->type == integer)
                     {
-                        dest->value.i_value = arg1->value.i_value * atoi(quad->arg2);
+                        dest->value.i_value = atoi(quad->arg1) / atoi(quad->arg2);
                     }
                     else if (dest->type == real)
                     {
-                        dest->value.r_value = arg1->value.r_value * atof(quad->arg2);
+                        dest->value.r_value = atof(quad->arg1) / atof(quad->arg2);
+                    }
+                    else
+                    {
+                        printf("Unexpected type error");
+                    }
+                }
+                else if (arg2 == NULL)
+                {
+                    if (dest->type == integer)
+                    {
+                        dest->value.i_value = arg1->value.i_value / atoi(quad->arg2);
+                    }
+                    else if (dest->type == real)
+                    {
+                        dest->value.r_value = arg1->value.r_value / atof(quad->arg2);
                     }
                     else
                     {
@@ -70,7 +84,22 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
                 dest = SymbolLookUp(theTable_p, quad->destination);
                 arg1 = SymbolLookUp(theTable_p, quad->arg1);
                 arg2 = SymbolLookUp(theTable_p, quad->arg2);
-                if (arg2 == NULL)
+                if (arg1 == NULL && arg2 == NULL)
+                {
+                    if (dest->type == integer)
+                    {
+                        dest->value.i_value = atoi(quad->arg1) * atoi(quad->arg2);
+                    }
+                    else if (dest->type == real)
+                    {
+                        dest->value.r_value = atof(quad->arg1) * atof(quad->arg2);
+                    }
+                    else
+                    {
+                        printf("Unexpected type error");
+                    }
+                }
+                else if (arg2 == NULL)
                 {
                     if (dest->type == integer)
                     {
@@ -123,7 +152,23 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
                 dest = SymbolLookUp(theTable_p, quad->destination);
                 arg1 = SymbolLookUp(theTable_p, quad->arg1);
                 arg2 = SymbolLookUp(theTable_p, quad->arg2);
-                if(arg2 == NULL){
+                if (arg1 == NULL && arg2 == NULL)
+                {
+                    if (dest->type == integer)
+                    {
+                        dest->value.i_value = atoi(quad->arg1) + atoi(quad->arg2);
+                    }
+                    else if (dest->type == real)
+                    {
+                        dest->value.r_value = atof(quad->arg1) + atof(quad->arg2);
+                    }
+                    else
+                    {
+                        printf("Unexpected type error");
+                    }
+                }
+                else if (arg2 == NULL)
+                {
                     if (dest->type == integer)
                     {
                         dest->value.i_value = arg1->value.i_value + atoi(quad->arg2);
@@ -174,7 +219,22 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
                 dest = SymbolLookUp(theTable_p, quad->destination);
                 arg1 = SymbolLookUp(theTable_p, quad->arg1);
                 arg2 = SymbolLookUp(theTable_p, quad->arg2);
-                if (arg2 == NULL)
+                if (arg1 == NULL && arg2 == NULL)
+                {
+                    if (dest->type == integer)
+                    {
+                        dest->value.i_value = atoi(quad->arg1) - atoi(quad->arg2);
+                    }
+                    else if (dest->type == real)
+                    {
+                        dest->value.r_value = atof(quad->arg1) - atof(quad->arg2);
+                    }
+                    else
+                    {
+                        printf("Unexpected type error");
+                    }
+                }
+                else if (arg2 == NULL)
                 {
                     if (dest->type == integer)
                     {
@@ -326,8 +386,9 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
                     }
                     else if (arg1->type == real)
                     {
-                        if(arg1->value.i_value < atof(quad->arg2)){
-                            i = GotoLine(quad->destination);
+                        //printf("%f < %f", arg1->value.r_value, atof(quad->arg2));
+                        if(arg1->value.r_value < atof(quad->arg2)){
+                                i = GotoLine(quad->destination);
                         }else{
                             i++;
                         }
@@ -504,7 +565,7 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
             case 'j':
                 //printf("Prueba j\n");
                 i = GotoLine(quad->destination);
-                // printf("Goto %d", i);
+                //printf("Goto %d", i);
                 break;
             default:
                 printf("Error");
@@ -516,5 +577,10 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
 }
 
 int GotoLine(char * g){
-    return g[5] - '0';
+    char chars[16];
+    strcpy(chars, g);
+    char * token;
+    token = strtok(chars, "_");
+    token = strtok(NULL, " ");
+    return  atoi(token);
 }

@@ -167,7 +167,7 @@ stmt:  IF exp THEN M stmt{
                                 Backpatch($3->false_list, quadLine+1);
                                 $$->next_list = $3->false_list;
                                 char buffer[16];
-                                sprintf(buffer, "goto %d", $2->quad);
+                                sprintf(buffer, "goto_%d", $2->quad);
                                 char *tempString = (char *)malloc(sizeof(char) * 16);
                                 strcpy(tempString, buffer);
 
