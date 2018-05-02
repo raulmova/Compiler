@@ -71,10 +71,10 @@ int yylex();
 /**** How is the TinyC GRAMMAR constructed     *****/
 
 %%
-statement_list: program        { printf ("No errors on the program.\n");}
+statement_list: program        { }
     ;
 
-M: %empty{  
+M: %empty{
             $$ = (line_p) malloc(sizeof(line));
             $$->quad = quadLine;
           }
@@ -82,7 +82,7 @@ M: %empty{
 
 N: %empty{
             $$ = (line_p) malloc(sizeof(line));
-            $$->next_list= NULL;  
+            $$->next_list= NULL;
             $$->next_list = NewList(quadLine);
             newQuad('j',"","", "goto_");
             incrementQuad();
@@ -98,7 +98,7 @@ var_dec: var_dec single_dec{
                             }
     | %empty{
               // $$ = (line_p) malloc(sizeof(line));
-              // $$->next_list = NULL;  
+              // $$->next_list = NULL;
             }
     ;
 
@@ -128,7 +128,7 @@ stmt_seq: stmt_seq M stmt {
                             //PrintList($1->next_list);
                             // PrintList($3->next_list);
                             // printf("Quad: %d \n", $2->quad);
-                            
+
                             Backpatch($1->next_list, $2->quad);
                             //Backpatch($3->next_list, $2->quad);
                             $$->next_list = MergeList($1->next_list, $3->next_list);
@@ -147,13 +147,13 @@ stmt:  IF exp THEN M stmt{
                             Backpatch($2->true_list, $4->quad );
                             $$->next_list = MergeList($2->false_list, $5->next_list);
                         }
-  |    IF exp THEN M stmt N ELSE M stmt{  
+  |    IF exp THEN M stmt N ELSE M stmt{
                                         $$ = (line_p) malloc(sizeof(line));
                                         $$->next_list = NULL;
                                         //PrintList($2-> true_list);
                                         Backpatch($2->true_list, $4->quad);
                                         Backpatch($2->false_list, $8->quad);
-                                        
+
                                         $$->next_list = MergeList($5->next_list, MergeList($6->next_list, $9->next_list));
                                         //PrintList($$->next_list);
                                         Backpatch($$->next_list, quadLine);
@@ -171,7 +171,7 @@ stmt:  IF exp THEN M stmt{
                                 char *tempString = (char *)malloc(sizeof(char) * 16);
                                 strcpy(tempString, buffer);
 
-                                
+
                                 newQuad('j',"","", tempString);
                                 incrementQuad();
                                 //gen('goto_', $2->quad);
@@ -201,7 +201,7 @@ stmt:  IF exp THEN M stmt{
                                         yyerror(theTable_p,"Warning, implicit casting between int and float");
                                         entry->value.r_value = (float)$3->value.i_value;
                                         $1->value.r_value = (float)$3->value.i_value;
-                                       
+
                                       }
                                     }
                                     //PrintItem(entry);
@@ -268,21 +268,21 @@ exp:    simple_exp LT simple_exp{
     |   simple_exp{
                     // $$ = (line_p) malloc(sizeof(line));
                     // $$->next_list = NULL;
-                    // $$->true_list = NULL; 
-                    // $$->false_list = NULL;                              
+                    // $$->true_list = NULL;
+                    // $$->false_list = NULL;
                     // $$->next_list = $1->next_list;
                     // $$->place = $1->place;
-                    
-                    // $$->true_list = $1->true_list; 
+
+                    // $$->true_list = $1->true_list;
                     //  $$->false_list = $1->false_list;
-                    $$ = $1; 
+                    $$ = $1;
                   }
     ;
 
 simple_exp:   simple_exp PLUS term{
                                       $$ = (line_p) malloc(sizeof(line));
                                       $$->next_list = NULL;
-                                      $$->true_list = NULL; 
+                                      $$->true_list = NULL;
                                       $$->false_list = NULL;
                                       if($1->type == $3->type){
                                         if($3->type == real){   // floating types
@@ -311,7 +311,7 @@ simple_exp:   simple_exp PLUS term{
                                       //gen($$->place ':=' $1->place '+' $3->place)
                                       newQuad('+',$1->place, $3->place, $$->place);
                                       incrementQuad();
-                                  
+
 
                                   }
     |         simple_exp MINUS term{
@@ -348,7 +348,7 @@ simple_exp:   simple_exp PLUS term{
                                       incrementQuad();
                                     }
     |         term{
-                    
+
                     $$ = $1;
                   }
     ;
@@ -425,7 +425,7 @@ term:   term TIMES factor{
                             char * t = newTemp(indexForTemp);
                             $$->place = t;
                             indexForTemp = indexForTemp + 1;
-                            printf("Type %d\n", $$->type);
+                          //  printf("Type %d\n", $$->type);
                             InsertSymbol(theTable_p, $$->place, $$->type,0);
                             //gen($$->place ':=' $1->place '/' $3->place)
                             newQuad('/',$1->place, $3->place, $$->place);
@@ -446,8 +446,8 @@ factor:   LPAREN exp RPAREN{
                               // $$->true_list = $2->true_list;
                               // $$->false_list = $2->false_list;
                               // $$->next_list = $2->next_list;
-                              
-                              $$ = $2;  
+
+                              $$ = $2;
                             }
     |     INT_NUM{
                       line_p l = malloc(sizeof(struct _line));
@@ -537,14 +537,19 @@ int main (){
   GHashTable * theTable_p; //declaration of hash table
   theTable_p = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)FreeItem);  //creation of hash table
   if(yyparse(theTable_p) == 0){
-    printf("No Errors\n");
-    //PrintTable(theTable_p);  //printing of hash table
+    printf("____________________________________________\n");
+    printf("|         NO ERRORS ON THE PROGRAM          |\n");
+    printf("____________________________________________\n");
+    printf("|       INTERMEDIATE CODE GENERATED         |\n");
+    printf("____________________________________________\n");
+    PrintQuads();
+    printf("____________________________________________\n");
+    printf("|                 INTERPRETER               |\n");
+    printf("____________________________________________\n");
+    Interpreter(GetList(), theTable_p);
+    PrintTable(theTable_p);  //printing of hash table
+    printf("____________________________________________\n");
   }
-  printf("Code gen:\n");
-  PrintQuads();
-  //PrintTable(theTable_p);
-  Interpreter(GetList(), theTable_p);
-  PrintTable(theTable_p);  //printing of hash table
   DestroyTable(theTable_p); //memory de allocation of the hash table
- 
+
 }

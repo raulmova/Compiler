@@ -11,7 +11,7 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
         entry_p arg2 = NULL;
         switch(quad->operation){
             case '/':
-                printf("Prueba /\n");
+                //printf("Prueba /\n");
                 dest = SymbolLookUp(theTable_p, quad->destination);
                 arg1 = SymbolLookUp(theTable_p, quad->arg1);
                 arg2 = SymbolLookUp(theTable_p, quad->arg2);
@@ -66,7 +66,7 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
                 i++;
                 break;
             case '*':
-                printf("Prueba *\n");
+                //printf("Prueba *\n");
                 dest = SymbolLookUp(theTable_p, quad->destination);
                 arg1 = SymbolLookUp(theTable_p, quad->arg1);
                 arg2 = SymbolLookUp(theTable_p, quad->arg2);
@@ -118,7 +118,7 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
                 i++;
                 break;
             case '+':
-                printf("Prueba +\n");
+                //printf("Prueba +\n");
                 // printf("des: %s arg1: %s arg2: %s", quad->destination, quad->arg1, quad->arg2);
                 dest = SymbolLookUp(theTable_p, quad->destination);
                 arg1 = SymbolLookUp(theTable_p, quad->arg1);
@@ -170,7 +170,7 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
                 i++;
                 break;
             case '-':
-                printf("Prueba -\n");
+                //printf("Prueba -\n");
                 dest = SymbolLookUp(theTable_p, quad->destination);
                 arg1 = SymbolLookUp(theTable_p, quad->arg1);
                 arg2 = SymbolLookUp(theTable_p, quad->arg2);
@@ -222,7 +222,7 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
                 i++;
                 break;
             case '=':
-                printf("Prueba =\n");
+                //printf("Prueba =\n");
                 dest = SymbolLookUp(theTable_p, quad->destination);
                 arg1 = SymbolLookUp(theTable_p, quad->arg1);
 
@@ -281,7 +281,7 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
                 i++;
                 break;
             case '<':
-                printf("Prueba <\n");
+                //printf("Prueba <\n");
                 arg1 = SymbolLookUp(theTable_p, quad->arg1);
                 arg2 = SymbolLookUp(theTable_p, quad->arg2);
                 if (arg2 == NULL && arg1 == NULL)
@@ -371,7 +371,7 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
                 }
                 break;
             case 'e':
-                printf("Prueba <\n");
+                //printf("Prueba <\n");
                 arg1 = SymbolLookUp(theTable_p, quad->arg1);
                 arg2 = SymbolLookUp(theTable_p, quad->arg2);
                 if (arg2 == NULL && arg1 == NULL)
@@ -502,15 +502,15 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
                 i++;
                 break;
             case 'j':
-                printf("Prueba j\n");
+                //printf("Prueba j\n");
                 i = GotoLine(quad->destination);
                 // printf("Goto %d", i);
                 break;
             default:
                 printf("Error");
         }
-        
-        
+
+
     }
     return EXIT_SUCCESS;
 }

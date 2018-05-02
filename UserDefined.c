@@ -9,25 +9,10 @@
   Routines used by the GLIB hash table structure
 */
 
-/*
-  Create a new  entry to the hash table
-*/
-
-/*
-entry_p NewItem (char * varName_p, char * type, unsigned int lineNumber){
-                   entry_p ent = (entry_p)malloc(sizeof(entry_p));
-                   //ent->value = (union val *) malloc(sizeof(union val));
-                   ent->name_p = varName_p;
-                   ent->type = type;
-                   // ent->value = value;
-                   //memcpy(ent->value, value, sizeof(union val));
-                   ent->lineNumber = lineNumber;
-                   return ent;
-                 }
-
-*/
 GList * quadList = NULL;
+
 int lineC = 0;
+
 void InsertSymbol(GHashTable *theTable_p, char * name, enum myTypes type, unsigned int lineNumber){
   entry_p entry = malloc(sizeof(tableEntry));
   entry->name_p = name;
@@ -46,6 +31,7 @@ void InsertSymbol(GHashTable *theTable_p, char * name, enum myTypes type, unsign
   Print the hash table content
 */
 int PrintTable (GHashTable * theTable_p){
+  printf("NAME-------TYPE-------VALUE-------LINE------|\n");
   g_hash_table_foreach(theTable_p, (GHFunc)SupportPrint, NULL);
   return(EXIT_SUCCESS);
 }
@@ -63,10 +49,10 @@ void SupportPrint (gpointer key_p, gpointer value_p, gpointer user_p){
 
 int PrintItem (entry_p theEntry_p){
   if(theEntry_p->type == real){
-    printf("Name: %s -- Type: %d -- Value: %f -- Line: %u\n",theEntry_p->name_p,theEntry_p->type,theEntry_p->value.r_value,theEntry_p->lineNumber);
+    printf("%2s  %9d %12.2f %9u        |\n",theEntry_p->name_p,theEntry_p->type,theEntry_p->value.r_value,theEntry_p->lineNumber);
   }
   else if(theEntry_p->type == integer){
-    printf("Name: %s -- Type: %d -- Value: %d -- Line: %u\n",theEntry_p->name_p,theEntry_p->type,theEntry_p->value.i_value,theEntry_p->lineNumber);
+    printf("%2s  %9d %12d %9u        |\n",theEntry_p->name_p,theEntry_p->type,theEntry_p->value.i_value,theEntry_p->lineNumber);
   }
 
   return 1;
@@ -102,17 +88,7 @@ int DestroyTable (GHashTable * theTable_p){
 }
 
 entry_p SymbolLookUp(GHashTable *theTable_p, char *name){
-    //entry_p item = malloc(sizeof(tableEntry));
     return g_hash_table_lookup(theTable_p,name);
-
-
-    // if(symEntry!= NULL){
-    //   // item->name_p 		= symEntry->name_p;
-	  //   // item->value 	= symEntry->value;
-	  //   // item->type 		= symEntry->type;
-    //   return symEntry;
-    // }
-    // return NULL;
 }
 
 GList * NewList(int quad){
@@ -188,6 +164,7 @@ GList * GetList(){
 }
 int PrintQuads()
 {
+  printf("LINE------DEST-----OP-----ARG1-----ARG2-----|\n");
   g_list_foreach(quadList, (GFunc)SupportPrintQuads, NULL);
   return (EXIT_SUCCESS);
 }
@@ -204,7 +181,7 @@ void SupportPrintQuads(gpointer data, gpointer user_data)
  */
 
 int PrintItemQuads(quad_p quad){
-printf("%d: %s %c %s %s\n",lineC++, quad->destination, quad->operation, quad->arg1, quad->arg2);
+printf(" %d:   %7s   %4c   %5s   %6s       |\n",lineC++, quad->destination, quad->operation, quad->arg1, quad->arg2);
   return 1;
 }
 

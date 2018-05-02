@@ -1,9 +1,8 @@
 /**
- * Copyright (c) 2016 Abelardo López Lagunas
  *
  * @file    UserDefined.h
  *
- * @author  Abelardo López Lagunas
+ * @author  Erik Martin & Raul Morales
  *
  * @date    Fri 13 May 2016 10:07 DST
  *
@@ -11,46 +10,18 @@
  *          specific user-defined data structure that is pointed to
  *          by the doubly linked list node.
  *
- * References:
- *          Code loosely based on my Generic Singly linked list algorithm.
  *
  * Revision history:
  *          Fri 13 May 2016 10:07 DST -- File created
  *
  * @warning If there is not enough memory to create a node or the hash
  *          management fails the related function indicates failure.
- *          If the DEBUG compiler flag is set then the program will terminate
- *          but more information is displayed indicating the source of error.
  *
- * @note    The code is meant to show how to implement hash tables using GLib
  *
  */
 
 #include <glib.h>
 #include "types.h"
-
-
-/**
- * @struct item
- *
- * @brief This is the basic user-defined element of the hash table
- *
- * The user-defined data structure is a @c string and a @c pointer to the
- * the symbol table entry.
- *
- */
-/* typedef struct item_{
-   char * key;                           < Hash table key is a string
-   void * tableEntry;           < Pointer to a generic data structure
-}item;
-*/
-
-/**
- * @typedef item_p
- *
- * @brief declare a pointer to the @c item @c structure
- */
-// typedef struct item_ *item_p;        /**< Declaration of ptr to an entry */
 
 /**
  * @union val
@@ -61,6 +32,7 @@
  * symbol table.
  *
  */
+
 union val {            /* Note that both values are 32-bits in length */
    int     i_value;                   /**< Interpret it as an integer */
    float   r_value;                      /**< Interpret it as a float */
@@ -112,8 +84,19 @@ typedef struct _line{
     GList * next_list;
 }line;
 
+/**
+ * @typedef entry_p
+ *
+ * @brief declare a pointer to the @c _line @c structure
+ */
 typedef struct _line * line_p;
 
+/**
+ * @struct _quad
+ *
+ * @brief This is the user-defined quads.
+ *
+ **/
 typedef struct _quad
 {
     char  operation;
@@ -122,6 +105,11 @@ typedef struct _quad
     char * destination;
 }quad;
 
+/**
+ * @typedef quad_p
+ *
+ * @brief declare a pointer to the @c _quad @c structure
+ */
 typedef struct _quad * quad_p;
 
 /**
@@ -187,33 +175,16 @@ void SupportPrint (gpointer key_p, gpointer value_p, gpointer user_p);
 int PrintTable (GHashTable * theTable_p);
 
 /**
- *
- * @brief Allocates memory to a node of the user-defined data structure.
- *
- * @b NewItem will allocate space for the @c varName_p string and set the
- * fields of the @c tableEntry structure.
- *
- * @param  varName_p is the input string which is copied by NewItem.
- * @param  type is the variable type   (integer or real).
- * @param  scope is the scope of the variable.
- * @param  lineNumber line where the variable was declared.
- *
- * @return @c entry_p pointer to the memory block that holds the newly created
- *         symbol table entry. The 32-bit value for the variable is set to
- *         zero.
- *
- * @code
- *  newNode_p = NewItem("someVariable", integer, 0, 13, 27);
- * @endcode
- *
- */
-
-//entry_p NewItem (char * varName_p, char * type, unsigned int lineNumber);
-
+*  Use GLIB function to return the pointer to theEntry
+*  based on the key
+**/
 entry_p SymbolLookUp (GHashTable *theTable_p, char *name);
+
+/**
+*  Use GLIB function to insert a new entry to
+*  the hashtable
+**/
 void InsertSymbol(GHashTable *theTable_p, char * name, enum myTypes type, unsigned int lineNumber);
-
-
 
 /**
  *
@@ -257,7 +228,9 @@ int FreeKey(char * key);
  *
  */
 int DestroyTable (GHashTable * theTable_p);
+
 int InsertItem(GHashTable * theTable_p, entry_p theEntry_p);
+
 entry_p GetItem(GHashTable * theTable_p, char *key);
 
 GList * NewList(int quad);
@@ -267,7 +240,6 @@ GList * MergeList(GList *list1, GList *list2);
 int PrintList(GList *list);
 
 void SupportPrintList(gpointer data, gpointer user_data);
-
 
 int PrintItemList(int i);
 
