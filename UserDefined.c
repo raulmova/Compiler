@@ -165,7 +165,7 @@ int Backpatch(GList * list, int quadNumber){
 }
 
 // CODE GENERATION functions
-void newQuad(char * op, char * arg1, char * arg2, char * dest){
+void newQuad(char op, char * arg1, char * arg2, char * dest){
     quad_p quadToAdd = malloc(sizeof(quad));
     quadToAdd->operation = op ;
     quadToAdd->arg1 = arg1 ;
@@ -183,12 +183,14 @@ char * newTemp(int index){
   return tempString;
 }
 
+GList * GetList(){
+  return quadList;
+}
 int PrintQuads()
 {
   g_list_foreach(quadList, (GFunc)SupportPrintQuads, NULL);
   return (EXIT_SUCCESS);
 }
-
 /*
 Support function needed by GLib
  */
@@ -201,8 +203,17 @@ void SupportPrintQuads(gpointer data, gpointer user_data)
  Actual printing
  */
 
-int PrintItemQuads(quad_p quad)
-{
-printf("%d: %s %s %s %s\n",lineC++, quad->destination, quad->operation, quad->arg1, quad->arg2);
+int PrintItemQuads(quad_p quad){
+printf("%d: %s %c %s %s\n",lineC++, quad->destination, quad->operation, quad->arg1, quad->arg2);
   return 1;
+}
+
+int IntegerToReal(GHashTable *theTable_p, char *name){
+  //printf("cast");
+  entry_p entry = SymbolLookUp(theTable_p, name);
+  float num = (float) entry->value.i_value;
+  //free(entry->value.i_value);
+  entry->value.r_value = num;
+  entry->type = real;
+  return EXIT_SUCCESS;
 }

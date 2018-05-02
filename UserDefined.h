@@ -116,7 +116,7 @@ typedef struct _line * line_p;
 
 typedef struct _quad
 {
-    char * operation;
+    char  operation;
     char * arg1;
     char * arg2;
     char * destination;
@@ -273,7 +273,7 @@ int PrintItemList(int i);
 
 int Backpatch(GList * list, int quadNumber);
 
-void newQuad(char * op, char * arg1, char * arg2, char * dest);
+void newQuad(char op, char * arg1, char * arg2, char * dest);
 
 char * newTemp(int index);
 
@@ -282,3 +282,7 @@ int PrintQuads();
 void SupportPrintQuads(gpointer data, gpointer user_data);
 
 int PrintItemQuads(quad_p quad);
+
+GList * GetList();
+
+int IntegerToReal(GHashTable *theTable_p, char *name);
