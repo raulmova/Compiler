@@ -164,7 +164,7 @@ GList * GetList(){
 }
 int PrintQuads()
 {
-  printf("LINE------DEST-----OP-----ARG1-----ARG2-----|\n");
+  printf("QUAD------DEST-----OP-----ARG1-----ARG2-----|\n");
   g_list_foreach(quadList, (GFunc)SupportPrintQuads, NULL);
   return (EXIT_SUCCESS);
 }
@@ -181,7 +181,7 @@ void SupportPrintQuads(gpointer data, gpointer user_data)
  */
 
 int PrintItemQuads(quad_p quad){
-printf(" %d:   %7s   %4c   %5s   %6s       |\n",lineC++, quad->destination, quad->operation, quad->arg1, quad->arg2);
+printf(" %2d   %7s   %5c   %6.5s     %4.5s     |\n",lineC++, quad->destination, quad->operation, quad->arg1, quad->arg2);
   return 1;
 }
 

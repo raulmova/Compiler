@@ -15,14 +15,45 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
                 dest = SymbolLookUp(theTable_p, quad->destination);
                 arg1 = SymbolLookUp(theTable_p, quad->arg1);
                 arg2 = SymbolLookUp(theTable_p, quad->arg2);
+                //if(atoi(quad->arg2) == 0 || atof(quad->arg2) == 0.0 ){
+                //printf("\n[ERROR]. DIVISION BY ZERO ON QUAD %d. \n\n",i);
+                //  exit(0);
+                //}
+                /*
+                if(arg2->type == real){
+                  if(arg2->value.r_value == 0.0){
+                    printf("\n[ERROR]. DIVISION BY ZERO ON QUAD %d. \n\n",i);
+                    exit(0);
+                  }
+                }
+                else if(arg2->type == integer){
+                  if(arg2->value.i_value == 0){
+                    printf("\n[ERROR]. DIVISION BY ZERO ON QUAD %d. \n\n",i);
+                    exit(0);
+                  }
+                }
+                */
+
                 if (arg1 == NULL && arg2 == NULL){
                     if (dest->type == integer)
                     {
-                        dest->value.i_value = atoi(quad->arg1) / atoi(quad->arg2);
+                        if(atoi(quad->arg2) == 0){
+                          printf("\n[ERROR]. DIVISION BY ZERO ON QUAD %d. \n\n",i);
+                          exit(0);
+                        }
+                        else{
+                          dest->value.i_value = atoi(quad->arg1) / atoi(quad->arg2);
+                        }
                     }
                     else if (dest->type == real)
                     {
+                      if(atof(quad->arg2) == 0.0 ){
+                        printf("\n[ERROR]. DIVISION BY ZERO ON QUAD %d. \n\n",i);
+                        exit(0);
+                      }
+                      else{
                         dest->value.r_value = atof(quad->arg1) / atof(quad->arg2);
+                      }
                     }
                     else
                     {
@@ -33,11 +64,23 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
                 {
                     if (dest->type == integer)
                     {
+                      if(atoi(quad->arg2) == 0){
+                        printf("\n[ERROR]. DIVISION BY ZERO ON QUAD %d. \n\n",i);
+                        exit(0);
+                      }
+                      else{
                         dest->value.i_value = arg1->value.i_value / atoi(quad->arg2);
+                      }
                     }
                     else if (dest->type == real)
                     {
+                      if(atof(quad->arg2) == 0.0){
+                        printf("\n[ERROR]. DIVISION BY ZERO ON QUAD %d. \n\n",i);
+                        exit(0);
+                      }
+                      else{
                         dest->value.r_value = arg1->value.r_value / atof(quad->arg2);
+                      }
                     }
                     else
                     {
@@ -48,11 +91,23 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
                 {
                     if (dest->type == integer)
                     {
+                      if(arg2->value.i_value == 0){
+                        printf("\n[ERROR]. DIVISION BY ZERO ON QUAD %d. \n\n",i);
+                        exit(0);
+                      }
+                      else{
                         dest->value.i_value = atoi(quad->arg1) / arg2->value.i_value;
+                      }
                     }
                     else if (dest->type == real)
                     {
-                        dest->value.r_value = atoi(quad->arg1) / arg2->value.r_value;
+                        if(arg2->value.r_value == 0.0 ){
+                          printf("\n[ERROR]. DIVISION BY ZERO ON QUAD %d. \n\n",i);
+                          exit(0);
+                        }
+                        else{
+                          dest->value.r_value = atoi(quad->arg1) / arg2->value.r_value;
+                        }
                     }
                     else
                     {
@@ -61,16 +116,25 @@ int Interpreter(GList * quadList, GHashTable * theTable_p){
                 }
                 else
                 {
-                    // printf("name %s:: type %d",dest->name_p, dest->type);
-                    // printf("name %s:: type %d", arg1->name_p, arg1->type);
-                    // printf("name %s:: type %d", arg2->name_p, arg2->type);
                     if (dest->type == integer)
                     {
+                      if(arg2->value.i_value == 0){
+                        printf("\n[ERROR]. DIVISION BY ZERO ON QUAD %d. \n\n",i);
+                        exit(0);
+                      }
+                      else{
                         dest->value.i_value = arg1->value.i_value / arg2->value.i_value;
+                      }
                     }
                     else if (dest->type == real)
                     {
+                      if( arg2->value.r_value == 0.0 ){
+                        printf("\n[ERROR]. DIVISION BY ZERO ON QUAD %d. \n\n",i);
+                        exit(0);
+                      }
+                      else{
                         dest->value.r_value = arg1->value.r_value / arg2->value.r_value;
+                      }
                     }
                     else
                     {

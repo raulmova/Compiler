@@ -129,7 +129,7 @@ stmt_seq: stmt_seq M stmt {
                             // PrintList($3->next_list);
                             // printf("Quad: %d \n", $2->quad);
 
-                            Backpatch($1->next_list, $2->quad);
+                            //Backpatch($1->next_list, $2->quad);
                             //Backpatch($3->next_list, $2->quad);
                             $$->next_list = MergeList($1->next_list, $3->next_list);
                             // PrintList($$->next_list);
